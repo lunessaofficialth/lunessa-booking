@@ -131,25 +131,36 @@ body{background:var(--cream);color:#4f4f4f}.card{background:rgba(255,255,255,.92
 </section>
 
 <script>
-/* เปลี่ยนเป็น URL /exec ของ Apps Script หลัง Deploy */
-const API_URL="https://script.google.com/macros/s/AKfycbwiIoKPiuj7vdXjuuZCvwlBkNXDZyeI5OZGS9ISFcY1JLIYTMCjO5FsFIE8VFHU9L3zNw/exec";
+/* =========================================================
+   LUNESSA BOOKING API
+========================================================= */
 
-const DOG_PRICES={
-  short:{
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyXYolalrQPcyJxLTHH81VJ6zl8TA-0vNL_KqcMjjj7PLdxAov5Z6D3iPYqClovLVHbiA/exec";
+
+
+/* =========================================================
+   PRICE DATA
+========================================================= */
+
+const DOG_PRICES = {
+  short: {
     XS:{weight:'น้อยกว่า 1–1.9 กก.',bath:259,clip:509,scissor:609},
     S:{weight:'2–3.9 กก.',bath:359,clip:609,scissor:709},
     M:{weight:'4–6.4 กก.',bath:409,clip:659,scissor:759},
     L:{weight:'6.5–9.9 กก.',bath:459,clip:759,scissor:859},
     XL:{weight:'10–15 กก.',bath:509,clip:809,scissor:909}
   },
-  medium:{
+
+  medium: {
     XS:{weight:'น้อยกว่า 1–1.9 กก.',bath:309,clip:559,scissor:659},
     S:{weight:'2–3.9 กก.',bath:409,clip:659,scissor:759},
     M:{weight:'4–6.4 กก.',bath:459,clip:759,scissor:859},
     L:{weight:'6.5–9.9 กก.',bath:509,clip:809,scissor:909},
     XL:{weight:'10–15 กก.',bath:559,clip:909,scissor:1009}
   },
-  long:{
+
+  long: {
     XS:{weight:'น้อยกว่า 1–1.9 กก.',bath:359,clip:659,scissor:759},
     S:{weight:'2–3.9 กก.',bath:459,clip:759,scissor:859},
     M:{weight:'4–6.4 กก.',bath:509,clip:859,scissor:959},
@@ -158,15 +169,17 @@ const DOG_PRICES={
   }
 };
 
-const CAT_PRICES={
-  short:{
+
+const CAT_PRICES = {
+  short: {
     XS:{weight:'น้อยกว่า 1–1.4 กก.',bath:309},
     S:{weight:'1.5–2.9 กก.',bath:359},
     M:{weight:'3–4.4 กก.',bath:409},
     L:{weight:'4.5–4.9 กก.',bath:459},
     XL:{weight:'5–7 กก.',bath:509}
   },
-  long:{
+
+  long: {
     XS:{weight:'น้อยกว่า 1–1.4 กก.',bath:359,clip:609,scissor:709},
     S:{weight:'1.5–2.9 กก.',bath:459,clip:759,scissor:859},
     M:{weight:'3–4.4 กก.',bath:509,clip:809,scissor:909},
@@ -175,201 +188,1116 @@ const CAT_PRICES={
   }
 };
 
-const DOG_COATS={
+
+const DOG_COATS = {
   short:'ขนสั้น / ขนชั้นเดียว',
   medium:'ขนกลาง / ขนชั้นสอง',
   long:'ขนยาว / ขนสองชั้น / ขนหนาพิเศษ'
 };
-const CAT_COATS={
+
+
+const CAT_COATS = {
   short:'ขนสั้น / ขนชั้นเดียว (แมวไทย)',
   long:'ขนสองชั้น / ขนยาว'
 };
 
+
+/* =========================================================
+   PAGE
+========================================================= */
+
 function showPage(id){
-  document.querySelectorAll('.page').forEach(x=>x.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-  window.scrollTo({top:0,behavior:'smooth'});
+
+  document
+    .querySelectorAll('.page')
+    .forEach(x =>
+      x.classList.add('hidden')
+    );
+
+  document
+    .getElementById(id)
+    .classList.remove('hidden');
+
+  window.scrollTo({
+    top:0,
+    behavior:'smooth'
+  });
 }
+
+
 function showInfo(type){
+
   showPage('info');
-  const data={
-    wallet:['Lunessa Wallet','Wallet จะเป็นเครดิตสำหรับใช้บริการในอนาคต เช่น เติมเงิน รับโบนัส และใช้ชำระค่าบริการ ระบบโครงสร้างจะรองรับตั้งแต่เวอร์ชันนี้ และจะเปิดใช้งานเมื่อระบบสมาชิกพร้อม'],
-    catstay:['ห้องพักน้องแมว','Lunessa มีบริการห้องพักสำหรับน้องแมวในบรรยากาศเป็นกันเอง ขณะนี้หน้าเว็บนี้เป็นหน้าแนะนำ และระบบจองห้องพักจะเปิดในขั้นต่อไป'],
-    products:['สินค้า','ส่วนสินค้าเตรียมเปิดให้บริการในอนาคต']
+
+  const data = {
+
+    wallet:[
+      'Lunessa Wallet',
+      'Wallet จะเป็นเครดิตสำหรับใช้บริการในอนาคต เช่น เติมเงิน รับโบนัส และใช้ชำระค่าบริการ ระบบโครงสร้างจะรองรับตั้งแต่เวอร์ชันนี้ และจะเปิดใช้งานเมื่อระบบสมาชิกพร้อม'
+    ],
+
+    catstay:[
+      'ห้องพักน้องแมว',
+      'Lunessa มีบริการห้องพักสำหรับน้องแมวในบรรยากาศเป็นกันเอง ขณะนี้หน้าเว็บนี้เป็นหน้าแนะนำ และระบบจองห้องพักจะเปิดในขั้นต่อไป'
+    ],
+
+    products:[
+      'สินค้า',
+      'ส่วนสินค้าเตรียมเปิดให้บริการในอนาคต'
+    ]
   };
-  document.getElementById('infoTitle').textContent=data[type][0];
-  document.getElementById('infoText').textContent=data[type][1];
+
+  document
+    .getElementById('infoTitle')
+    .textContent = data[type][0];
+
+  document
+    .getElementById('infoText')
+    .textContent = data[type][1];
 }
+
+
 function setLang(lang){
-  localStorage.setItem('lunessa_lang',lang);
-  const hero=document.getElementById('hero');
-  if(lang==='en') hero.textContent='Warm, friendly grooming and care for dogs and cats, with attention to every visit.';
-  else if(lang==='zh') hero.textContent='为狗狗和猫咪提供温暖、安心的美容与照护服务，用心对待每一次到店。';
-  else hero.textContent='ดูแลน้องหมาและน้องแมวด้วยบรรยากาศอบอุ่น เป็นกันเอง และใส่ใจในทุกรายละเอียด';
-}
-function loadPriceSizes(){
-  const type=document.getElementById('priceType').value;
-  const coat=document.getElementById('priceCoat');
-  const size=document.getElementById('priceSize');
-  if(type==='dog'){
-    coat.innerHTML=Object.entries(DOG_COATS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+
+  localStorage.setItem(
+    'lunessa_lang',
+    lang
+  );
+
+  const hero =
+    document.getElementById('hero');
+
+  if(lang === 'en'){
+
+    hero.textContent =
+      'Warm, friendly grooming and care for dogs and cats, with attention to every visit.';
+
+  }else if(lang === 'zh'){
+
+    hero.textContent =
+      '为狗狗和猫咪提供温暖、安心的美容与照护服务，用心对待每一次到店。';
+
   }else{
-    coat.innerHTML=Object.entries(CAT_COATS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
-  }
-  size.innerHTML='';
-  const data=type==='dog'?DOG_PRICES.short:CAT_PRICES.short;
-  Object.entries(data).forEach(([k,v])=>{
-    size.insertAdjacentHTML('beforeend',`<option value="${k}">${k} — ${v.weight}</option>`);
-  });
-  loadPriceServices();
-}
-function loadPriceServices(){
-  const type=priceType.value,coat=priceCoat.value;
-  const data=type==='dog'?DOG_PRICES[coat]:CAT_PRICES[coat];
-  const service=priceService;
-  service.innerHTML='';
-  const names={bath:'อาบน้ำอย่างเดียว',clip:'อาบน้ำ + ตัดไถ',scissor:'อาบน้ำ + ตัดขนกรรไกร'};
-  Object.keys(data[Object.keys(data)[0]]).filter(k=>['bath','clip','scissor'].includes(k)).forEach(k=>{
-    service.insertAdjacentHTML('beforeend',`<option value="${k}">${names[k]}</option>`);
-  });
-  updatePriceWeight();
-}
-function updatePriceWeight(){
-  const type=priceType.value,coat=priceCoat.value,size=priceSize.value;
-  const data=type==='dog'?DOG_PRICES[coat]:CAT_PRICES[coat];
-  if(data && data[size]) priceWeightHint.textContent=`ช่วงน้ำหนัก: ${data[size].weight}`;
-}
-function calculatePrice(){
-  const type=priceType.value,size=priceSize.value,coat=priceCoat.value,svc=priceService.value;
-  const box=document.getElementById('priceResult');box.classList.remove('hidden');
-  const data=type==='dog'?DOG_PRICES[coat]:CAT_PRICES[coat];
-  const row=data[size];
-  if(row && row[svc]!=null){
-    box.innerHTML=`<div class="text-sm">ราคาโดยประมาณ</div><div class="text-3xl font-semibold text-[#556B5D] mt-1">฿${row[svc].toLocaleString()}</div><div class="text-sm mt-2">${size} • ${row.weight}</div><div class="text-sm">${type==='dog'?DOG_COATS[coat]:CAT_COATS[coat]} • ${({'bath':'อาบน้ำอย่างเดียว','clip':'อาบน้ำ + ตัดไถ','scissor':'อาบน้ำ + ตัดขนกรรไกร'})[svc]}</div>`;
-  }else{
-    box.innerHTML='<div class="text-sm">บริการนี้ไม่มีในแพ็กเกจตามตารางร้าน</div>';
+
+    hero.textContent =
+      'ดูแลน้องหมาและน้องแมวด้วยบรรยากาศอบอุ่น เป็นกันเอง และใส่ใจในทุกรายละเอียด';
   }
 }
 
-function serviceHours(service){return service==='bath'?2:(service==='clip'||service==='scissor'?3:(service==='haircut_only'?2:1))}
-function depositPerPet(service){return (service==='clip'||service==='scissor')?400:200}
-function getPets(){
-  const pets=[{name:pet1Name.value.trim(),type:pet1Type.value,service:pet1Service.value}];
-  if(!pets[0].name) throw new Error('กรุณาใส่ชื่อน้องตัวที่ 1');
-  if(pet2Type.value){
-    if(!pet2Name.value.trim()) throw new Error('กรุณาใส่ชื่อน้องตัวที่ 2');
-    pets.push({name:pet2Name.value.trim(),type:pet2Type.value,service:pet2Service.value});
+
+/* =========================================================
+   PRICE CALCULATOR
+========================================================= */
+
+function loadPriceSizes(){
+
+  const type =
+    document.getElementById('priceType').value;
+
+  const coat =
+    document.getElementById('priceCoat');
+
+  const size =
+    document.getElementById('priceSize');
+
+
+  if(type === 'dog'){
+
+    coat.innerHTML =
+      Object
+        .entries(DOG_COATS)
+        .map(
+          ([k,v]) =>
+            `<option value="${k}">${v}</option>`
+        )
+        .join('');
+
+  }else{
+
+    coat.innerHTML =
+      Object
+        .entries(CAT_COATS)
+        .map(
+          ([k,v]) =>
+            `<option value="${k}">${v}</option>`
+        )
+        .join('');
   }
+
+
+  size.innerHTML = '';
+
+
+  const data =
+    type === 'dog'
+      ? DOG_PRICES.short
+      : CAT_PRICES.short;
+
+
+  Object
+    .entries(data)
+    .forEach(
+      ([k,v]) => {
+
+        size.insertAdjacentHTML(
+          'beforeend',
+          `<option value="${k}">
+            ${k} — ${v.weight}
+          </option>`
+        );
+      }
+    );
+
+
+  loadPriceServices();
+}
+
+
+function loadPriceServices(){
+
+  const type =
+    document.getElementById('priceType').value;
+
+  const coat =
+    document.getElementById('priceCoat').value;
+
+  const service =
+    document.getElementById('priceService');
+
+
+  const data =
+    type === 'dog'
+      ? DOG_PRICES[coat]
+      : CAT_PRICES[coat];
+
+
+  service.innerHTML = '';
+
+
+  const names = {
+
+    bath:'อาบน้ำอย่างเดียว',
+
+    clip:'อาบน้ำ + ตัดไถ',
+
+    scissor:'อาบน้ำ + ตัดขนกรรไกร'
+  };
+
+
+  Object
+    .keys(data[Object.keys(data)[0]])
+    .filter(
+      k =>
+        ['bath','clip','scissor']
+          .includes(k)
+    )
+    .forEach(
+      k => {
+
+        service.insertAdjacentHTML(
+          'beforeend',
+          `<option value="${k}">
+            ${names[k]}
+          </option>`
+        );
+      }
+    );
+
+
+  updatePriceWeight();
+}
+
+
+function updatePriceWeight(){
+
+  const type =
+    document.getElementById('priceType').value;
+
+  const coat =
+    document.getElementById('priceCoat').value;
+
+  const size =
+    document.getElementById('priceSize').value;
+
+
+  const data =
+    type === 'dog'
+      ? DOG_PRICES[coat]
+      : CAT_PRICES[coat];
+
+
+  const hint =
+    document.getElementById(
+      'priceWeightHint'
+    );
+
+
+  if(
+    data &&
+    data[size]
+  ){
+
+    hint.textContent =
+      `ช่วงน้ำหนัก: ${data[size].weight}`;
+  }
+}
+
+
+function calculatePrice(){
+
+  const type =
+    document.getElementById('priceType').value;
+
+  const size =
+    document.getElementById('priceSize').value;
+
+  const coat =
+    document.getElementById('priceCoat').value;
+
+  const svc =
+    document.getElementById('priceService').value;
+
+
+  const box =
+    document.getElementById(
+      'priceResult'
+    );
+
+
+  box.classList.remove(
+    'hidden'
+  );
+
+
+  const data =
+    type === 'dog'
+      ? DOG_PRICES[coat]
+      : CAT_PRICES[coat];
+
+
+  const row =
+    data[size];
+
+
+  if(
+    row &&
+    row[svc] != null
+  ){
+
+    box.innerHTML = `
+
+      <div class="text-sm">
+        ราคาโดยประมาณ
+      </div>
+
+      <div class="text-3xl font-semibold text-[#556B5D] mt-1">
+        ฿${row[svc].toLocaleString()}
+      </div>
+
+      <div class="text-sm mt-2">
+        ${size} • ${row.weight}
+      </div>
+
+      <div class="text-sm">
+        ${
+          type === 'dog'
+            ? DOG_COATS[coat]
+            : CAT_COATS[coat]
+        }
+        •
+        ${
+          {
+            bath:'อาบน้ำอย่างเดียว',
+            clip:'อาบน้ำ + ตัดไถ',
+            scissor:'อาบน้ำ + ตัดขนกรรไกร'
+          }[svc]
+        }
+      </div>
+    `;
+
+  }else{
+
+    box.innerHTML =
+      '<div class="text-sm">บริการนี้ไม่มีในแพ็กเกจตามตารางร้าน</div>';
+  }
+}
+
+
+/* =========================================================
+   BOOKING RULES
+========================================================= */
+
+function serviceHours(service){
+
+  if(service === 'bath')
+    return 2;
+
+  if(
+    service === 'clip' ||
+    service === 'scissor'
+  )
+    return 3;
+
+  if(service === 'haircut_only')
+    return 2;
+
+  return 1;
+}
+
+
+function depositPerPet(service){
+
+  return (
+    service === 'clip' ||
+    service === 'scissor'
+  )
+    ? 400
+    : 200;
+}
+
+
+function getPets(){
+
+  const pet1 = {
+    name:
+      document
+        .getElementById('pet1Name')
+        .value
+        .trim(),
+
+    type:
+      document
+        .getElementById('pet1Type')
+        .value,
+
+    service:
+      document
+        .getElementById('pet1Service')
+        .value
+  };
+
+
+  if(!pet1.name){
+
+    throw new Error(
+      'กรุณาใส่ชื่อน้องตัวที่ 1'
+    );
+  }
+
+
+  const pet2Type =
+    document
+      .getElementById('pet2Type')
+      .value;
+
+
+  const pets = [pet1];
+
+
+  if(pet2Type){
+
+    const pet2Name =
+      document
+        .getElementById('pet2Name')
+        .value
+        .trim();
+
+
+    if(!pet2Name){
+
+      throw new Error(
+        'กรุณาใส่ชื่อน้องตัวที่ 2'
+      );
+    }
+
+
+    pets.push({
+
+      name:pet2Name,
+
+      type:pet2Type,
+
+      service:
+        document
+          .getElementById(
+            'pet2Service'
+          )
+          .value
+    });
+  }
+
+
   return pets;
 }
+
+
 function bookingHours(pets){
-  if(pets.length===1)return serviceHours(pets[0].service);
-  const a=pets.map(p=>p.service);
-  const baths=a.filter(x=>x==='bath').length;
-  const grooms=a.filter(x=>x==='clip'||x==='scissor').length;
-  if(baths===1&&grooms===1)return 3;
-  if(grooms===2)return 4;
-  if(baths===2)return 3;
-  return a.reduce((n,s)=>n+serviceHours(s),0);
-}
-function depositTotal(pets){return pets.reduce((n,p)=>n+depositPerPet(p.service),0)}
-function updateSummary(){
-  try{
-    const pets=getPets();
-    const h=bookingHours(pets),d=depositTotal(pets);
-    document.getElementById('summary').innerHTML=`<div class="text-[#556B5D] font-semibold">สรุปการจอง</div><div class="mt-2">${pets.map(p=>`${p.name} — ${p.type==='dog'?'สุนัข':'แมว'} — ${serviceText(p.service)}`).join('<br>')}</div><div class="mt-3">เวลาที่ต้องใช้: <b>${h} ชั่วโมง</b></div><div>มัดจำ: <b>฿${d.toLocaleString()}</b></div>`;
-  }catch(e){document.getElementById('summary').innerHTML='<span class="text-gray-500">กรอกข้อมูลน้องเพื่อดูเวลาและมัดจำ</span>'}
-}
-function serviceText(s){return ({bath:'อาบน้ำ',clip:'อาบน้ำ + ตัดไถ',scissor:'อาบน้ำ + ตัดกรรไกร',haircut_only:'ตัดขนอย่างเดียว',addon:'บริการเสริมอย่างเดียว'})[s]||s}
-async function loadTimes(){
-  const d=bookingDate.value,sel=bookingTime;
-  if(!d)return;
-  sel.innerHTML='<option>กำลังตรวจสอบ...</option>';
-  try{
-    const r=await fetch(API_URL+'?action=slots&date='+encodeURIComponent(d));
-    const data=await r.json();
-    sel.innerHTML='<option value="">เลือกเวลา</option>';
-    Object.entries(data.slots||{}).forEach(([t,free])=>{
-      if(free){const o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o)}
-    });
-  }catch(e){sel.innerHTML='<option value="">โหลดเวลาไม่สำเร็จ</option>'}
-}
-async function startCheckout(){
-  const msg=document.getElementById('bookingMsg');
-  try{
-    if(!owner.value.trim()||!phone.value.trim()||!bookingDate.value||!bookingTime.value)throw new Error('กรุณากรอกชื่อ เบอร์ วันที่ และเวลาให้ครบ');
-    const pets=getPets(),hours=bookingHours(pets),deposit=depositTotal(pets);
-    msg.textContent='กำลังตรวจสอบคิวและสร้างการชำระเงิน...';
-    const payload={action:'createCheckout',owner:owner.value.trim(),phone:phone.value.trim(),date:bookingDate.value,time:bookingTime.value,pets,hours,deposit};
-    const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
-    const data=await r.json();
-    if(!data.ok)throw new Error(data.message||'ไม่สามารถสร้างรายการชำระเงินได้');
-    window.location.href=data.checkoutUrl;
-  }catch(e){msg.textContent=e.message;msg.className='mt-4 text-center text-red-600'}
-}
-loadPriceSizes();updateSummary();
-document.getElementById('pet1Name').addEventListener('input',updateSummary);
-document.getElementById('pet2Name').addEventListener('input',updateSummary);
-document.getElementById('priceSize').addEventListener('change',updatePriceWeight);
-function serviceHours(service){return service==='bath'?2:(service==='clip'||service==='scissor'?3:(service==='haircut_only'?2:1))}
-function depositPerPet(service){return (service==='clip'||service==='scissor')?400:200}
-function getPets(){
-  const pets=[{name:pet1Name.value.trim(),type:pet1Type.value,service:pet1Service.value}];
-  if(!pets[0].name) throw new Error('กรุณาใส่ชื่อน้องตัวที่ 1');
-  if(pet2Type.value){
-    if(!pet2Name.value.trim()) throw new Error('กรุณาใส่ชื่อน้องตัวที่ 2');
-    pets.push({name:pet2Name.value.trim(),type:pet2Type.value,service:pet2Service.value});
+
+  if(pets.length === 1){
+
+    return serviceHours(
+      pets[0].service
+    );
   }
-  return pets;
+
+
+  const services =
+    pets.map(
+      p => p.service
+    );
+
+
+  const baths =
+    services.filter(
+      x => x === 'bath'
+    ).length;
+
+
+  const grooms =
+    services.filter(
+      x =>
+        x === 'clip' ||
+        x === 'scissor'
+    ).length;
+
+
+  if(
+    baths === 1 &&
+    grooms === 1
+  )
+    return 3;
+
+
+  if(grooms === 2)
+    return 4;
+
+
+  if(baths === 2)
+    return 3;
+
+
+  return services.reduce(
+    (n,s) =>
+      n + serviceHours(s),
+    0
+  );
 }
-function bookingHours(pets){
-  if(pets.length===1)return serviceHours(pets[0].service);
-  const a=pets.map(p=>p.service);
-  const baths=a.filter(x=>x==='bath').length;
-  const grooms=a.filter(x=>x==='clip'||x==='scissor').length;
-  if(baths===1&&grooms===1)return 3;
-  if(grooms===2)return 4;
-  if(baths===2)return 3;
-  return a.reduce((n,s)=>n+serviceHours(s),0);
+
+
+function depositTotal(pets){
+
+  return pets.reduce(
+    (n,p) =>
+      n +
+      depositPerPet(
+        p.service
+      ),
+    0
+  );
 }
-function depositTotal(pets){return pets.reduce((n,p)=>n+depositPerPet(p.service),0)}
+
+
+function serviceText(s){
+
+  return ({
+    bath:'อาบน้ำ',
+    clip:'อาบน้ำ + ตัดไถ',
+    scissor:'อาบน้ำ + ตัดกรรไกร',
+    haircut_only:'ตัดขนอย่างเดียว',
+    addon:'บริการเสริมอย่างเดียว'
+  })[s] || s;
+}
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
 function updateSummary(){
+
+  const summary =
+    document.getElementById(
+      'summary'
+    );
+
+
   try{
-    const pets=getPets();
-    const h=bookingHours(pets),d=depositTotal(pets);
-    document.getElementById('summary').innerHTML=`<div class="text-[#556B5D] font-semibold">สรุปการจอง</div><div class="mt-2">${pets.map(p=>`${p.name} — ${p.type==='dog'?'สุนัข':'แมว'} — ${serviceText(p.service)}`).join('<br>')}</div><div class="mt-3">เวลาที่ต้องใช้: <b>${h} ชั่วโมง</b></div><div>มัดจำ: <b>฿${d.toLocaleString()}</b></div>`;
-  }catch(e){document.getElementById('summary').innerHTML='<span class="text-gray-500">กรอกข้อมูลน้องเพื่อดูเวลาและมัดจำ</span>'}
+
+    const pets =
+      getPets();
+
+    const hours =
+      bookingHours(pets);
+
+    const deposit =
+      depositTotal(pets);
+
+
+    summary.innerHTML = `
+
+      <div class="text-[#556B5D] font-semibold">
+        สรุปการจอง
+      </div>
+
+      <div class="mt-2">
+        ${
+          pets
+            .map(
+              p =>
+                `${p.name} — ${
+                  p.type === 'dog'
+                    ? 'สุนัข'
+                    : 'แมว'
+                } — ${serviceText(p.service)}`
+            )
+            .join('<br>')
+        }
+      </div>
+
+      <div class="mt-3">
+        เวลาที่ต้องใช้:
+        <b>${hours} ชั่วโมง</b>
+      </div>
+
+      <div>
+        มัดจำ:
+        <b>฿${deposit.toLocaleString()}</b>
+      </div>
+    `;
+
+
+  }catch(e){
+
+    summary.innerHTML =
+      '<span class="text-gray-500">กรอกข้อมูลน้องเพื่อดูเวลาและมัดจำ</span>';
+  }
 }
-function serviceText(s){return ({bath:'อาบน้ำ',clip:'อาบน้ำ + ตัดไถ',scissor:'อาบน้ำ + ตัดกรรไกร',haircut_only:'ตัดขนอย่างเดียว',addon:'บริการเสริมอย่างเดียว'})[s]||s}
+
+
+/* =========================================================
+   LOAD AVAILABLE TIMES
+========================================================= */
+
+/*
+  จุดสำคัญที่แก้:
+
+  เดิม:
+  date อย่างเดียว
+
+  ใหม่:
+  date + hours
+
+  ดังนั้น Server จะเอา hours
+  ไปเช็ค FREE ต่อเนื่องจาก Lunessa Schedule
+*/
+
 async function loadTimes(){
-  const d=bookingDate.value,sel=bookingTime;
-  if(!d)return;
-  sel.innerHTML='<option>กำลังตรวจสอบ...</option>';
+
+  const date =
+    document
+      .getElementById(
+        'bookingDate'
+      )
+      .value;
+
+
+  const select =
+    document
+      .getElementById(
+        'bookingTime'
+      );
+
+
+  if(!date){
+
+    select.innerHTML =
+      '<option value="">เลือกเวลา</option>';
+
+    return;
+  }
+
+
+  /*
+    คำนวณจากบริการที่เลือก
+  */
+  let hours;
+
+
   try{
-    const r=await fetch(API_URL+'?action=slots&date='+encodeURIComponent(d));
-    const data=await r.json();
-    sel.innerHTML='<option value="">เลือกเวลา</option>';
-    Object.entries(data.slots||{}).forEach(([t,free])=>{
-      if(free){const o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o)}
-    });
-  }catch(e){sel.innerHTML='<option value="">โหลดเวลาไม่สำเร็จ</option>'}
+
+    /*
+      ใช้ข้อมูลบริการโดยตรง
+      ไม่บังคับให้กรอกชื่อน้องก่อน
+    */
+    const pet1Service =
+      document
+        .getElementById(
+          'pet1Service'
+        )
+        .value;
+
+
+    const pet2Type =
+      document
+        .getElementById(
+          'pet2Type'
+        )
+        .value;
+
+
+    if(pet2Type){
+
+      const pet2Service =
+        document
+          .getElementById(
+            'pet2Service'
+          )
+          .value;
+
+
+      const services = [
+        pet1Service,
+        pet2Service
+      ];
+
+
+      const baths =
+        services.filter(
+          x => x === 'bath'
+        ).length;
+
+
+      const grooms =
+        services.filter(
+          x =>
+            x === 'clip' ||
+            x === 'scissor'
+        ).length;
+
+
+      if(
+        baths === 1 &&
+        grooms === 1
+      ){
+
+        hours = 3;
+
+      }else if(grooms === 2){
+
+        hours = 4;
+
+      }else if(baths === 2){
+
+        hours = 3;
+
+      }else{
+
+        hours =
+          services.reduce(
+            (n,s) =>
+              n + serviceHours(s),
+            0
+          );
+      }
+
+    }else{
+
+      hours =
+        serviceHours(
+          pet1Service
+        );
+    }
+
+
+  }catch(e){
+
+    hours = 2;
+  }
+
+
+  select.innerHTML =
+    '<option value="">กำลังตรวจสอบเวลา...</option>';
+
+
+  try{
+
+    const url =
+      API_URL +
+      '?action=slots' +
+      '&date=' +
+      encodeURIComponent(date) +
+      '&hours=' +
+      encodeURIComponent(hours);
+
+
+    const response =
+      await fetch(url);
+
+
+    const data =
+      await response.json();
+
+
+    if(!data.ok){
+
+      throw new Error(
+        data.message ||
+        'ไม่สามารถตรวจสอบเวลาได้'
+      );
+    }
+
+
+    select.innerHTML =
+      '<option value="">เลือกเวลา</option>';
+
+
+    let count = 0;
+
+
+    Object
+      .entries(
+        data.slots || {}
+      )
+      .forEach(
+        ([time,free]) => {
+
+          if(free){
+
+            const option =
+              document.createElement(
+                'option'
+              );
+
+
+            option.value =
+              time;
+
+            option.textContent =
+              time;
+
+
+            select.appendChild(
+              option
+            );
+
+
+            count++;
+          }
+        }
+      );
+
+
+    if(count === 0){
+
+      select.innerHTML =
+        '<option value="">ไม่มีเวลาว่างสำหรับบริการนี้</option>';
+    }
+
+
+  }catch(e){
+
+    console.error(e);
+
+    select.innerHTML =
+      '<option value="">โหลดเวลาไม่สำเร็จ</option>';
+  }
 }
+
+
+/* =========================================================
+   START CHECKOUT
+========================================================= */
+
 async function startCheckout(){
-  const msg=document.getElementById('bookingMsg');
+
+  const msg =
+    document.getElementById(
+      'bookingMsg'
+    );
+
+
+  msg.className =
+    'mt-4 text-center';
+
+
   try{
-    if(!owner.value.trim()||!phone.value.trim()||!bookingDate.value||!bookingTime.value)throw new Error('กรุณากรอกชื่อ เบอร์ วันที่ และเวลาให้ครบ');
-    const pets=getPets(),hours=bookingHours(pets),deposit=depositTotal(pets);
-    msg.textContent='กำลังตรวจสอบคิวและสร้างการชำระเงิน...';
-    const payload={action:'createCheckout',owner:owner.value.trim(),phone:phone.value.trim(),date:bookingDate.value,time:bookingTime.value,pets,hours,deposit};
-    const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
-    const data=await r.json();
-    if(!data.ok)throw new Error(data.message||'ไม่สามารถสร้างรายการชำระเงินได้');
-    window.location.href=data.checkoutUrl;
-  }catch(e){msg.textContent=e.message;msg.className='mt-4 text-center text-red-600'}
+
+    const owner =
+      document
+        .getElementById(
+          'owner'
+        )
+        .value
+        .trim();
+
+
+    const phone =
+      document
+        .getElementById(
+          'phone'
+        )
+        .value
+        .trim();
+
+
+    const date =
+      document
+        .getElementById(
+          'bookingDate'
+        )
+        .value;
+
+
+    const time =
+      document
+        .getElementById(
+          'bookingTime'
+        )
+        .value;
+
+
+    if(
+      !owner ||
+      !phone ||
+      !date ||
+      !time
+    ){
+
+      throw new Error(
+        'กรุณากรอกชื่อ เบอร์ วันที่ และเวลาให้ครบ'
+      );
+    }
+
+
+    const pets =
+      getPets();
+
+
+    const hours =
+      bookingHours(pets);
+
+
+    const deposit =
+      depositTotal(pets);
+
+
+    msg.textContent =
+      'กำลังตรวจสอบคิวและสร้างการชำระเงิน...';
+
+
+    /*
+      Server จะตรวจซ้ำอีกครั้ง
+      ก่อนสร้าง Stripe
+    */
+    const payload = {
+
+      action:
+        'createCheckout',
+
+      owner:
+        owner,
+
+      phone:
+        phone,
+
+      date:
+        date,
+
+      time:
+        time,
+
+      pets:
+        pets,
+
+      hours:
+        hours,
+
+      deposit:
+        deposit
+    };
+
+
+    const response =
+      await fetch(
+        API_URL,
+        {
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'text/plain;charset=utf-8'
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if(!data.ok){
+
+      throw new Error(
+        data.message ||
+        'ไม่สามารถสร้างรายการชำระเงินได้'
+      );
+    }
+
+
+    /*
+      ไป Stripe
+    */
+    window.location.href =
+      data.checkoutUrl;
+
+
+  }catch(e){
+
+    console.error(e);
+
+    msg.textContent =
+      e.message;
+
+
+    msg.className =
+      'mt-4 text-center text-red-600';
+  }
 }
-loadPriceSizes();updateSummary();
-document.getElementById('pet1Name').addEventListener('input',updateSummary);
-document.getElementById('pet2Name').addEventListener('input',updateSummary);
+
+
+/* =========================================================
+   EVENTS
+========================================================= */
+
+/*
+  วันที่เปลี่ยน
+*/
+document
+  .getElementById(
+    'bookingDate'
+  )
+  .addEventListener(
+    'change',
+    loadTimes
+  );
+
+
+/*
+  เปลี่ยนบริการตัวที่ 1
+  ต้องโหลดเวลาใหม่ทันที
+*/
+document
+  .getElementById(
+    'pet1Service'
+  )
+  .addEventListener(
+    'change',
+    () => {
+
+      updateSummary();
+      loadTimes();
+    }
+  );
+
+
+/*
+  เพิ่ม/เปลี่ยนตัวที่ 2
+*/
+document
+  .getElementById(
+    'pet2Type'
+  )
+  .addEventListener(
+    'change',
+    () => {
+
+      updateSummary();
+      loadTimes();
+    }
+  );
+
+
+document
+  .getElementById(
+    'pet2Service'
+  )
+  .addEventListener(
+    'change',
+    () => {
+
+      updateSummary();
+      loadTimes();
+    }
+  );
+
+
+/*
+  ชื่อน้อง
+*/
+document
+  .getElementById(
+    'pet1Name'
+  )
+  .addEventListener(
+    'input',
+    updateSummary
+  );
+
+
+document
+  .getElementById(
+    'pet2Name'
+  )
+  .addEventListener(
+    'input',
+    updateSummary
+  );
+
+
+/*
+  Price calculator
+*/
+document
+  .getElementById(
+    'priceType'
+  )
+  .addEventListener(
+    'change',
+    loadPriceSizes
+  );
+
+
+document
+  .getElementById(
+    'priceCoat'
+  )
+  .addEventListener(
+    'change',
+    loadPriceServices
+  );
+
+
+document
+  .getElementById(
+    'priceSize'
+  )
+  .addEventListener(
+    'change',
+    updatePriceWeight
+  );
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+loadPriceSizes();
+updateSummary();
 </script>
 </body>
 </html>
