@@ -23,7 +23,7 @@ body{
 }
 
 .card{
-  background:rgba(255,255,255,.92);
+  background:rgba(255,255,255,.94);
   border:1px solid var(--line);
 }
 
@@ -36,6 +36,11 @@ body{
   opacity:.9;
 }
 
+.btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
 .soft{
   background:#F1ECE4;
 }
@@ -43,6 +48,16 @@ body{
 .time-note{
   font-size:.8rem;
   color:#777;
+}
+
+.lang-active{
+  color:#556B5D;
+  font-weight:600;
+  text-decoration:underline;
+}
+
+.page{
+  min-height:70vh;
 }
 </style>
 </head>
@@ -54,19 +69,19 @@ body{
 <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
 
 <a
-  href="#home"
-  onclick="showPage('home')"
-  class="font-semibold tracking-[.18em] text-[#556B5D]"
+href="#home"
+onclick="showPage('home');return false;"
+class="font-semibold tracking-[.18em] text-[#556B5D]"
 >
 LUNESSA PET BOUTIQUE
 </a>
 
 <div class="flex gap-2 text-sm">
-<button onclick="setLang('th')">ไทย</button>
+<button id="langTH" onclick="setLang('th')">ไทย</button>
 <span>·</span>
-<button onclick="setLang('en')">EN</button>
+<button id="langEN" onclick="setLang('en')">EN</button>
 <span>·</span>
-<button onclick="setLang('zh')">中文</button>
+<button id="langZH" onclick="setLang('zh')">中文</button>
 </div>
 
 </div>
@@ -82,22 +97,22 @@ LUNESSA PET BOUTIQUE
 <div>
 
 <p
-  id="heroKicker"
-  class="text-[#9A7B66] tracking-[.22em] text-xs md:text-sm"
+data-i18n="heroTag"
+class="text-[#9A7B66] tracking-[.22em] text-xs md:text-sm"
 >
 GROOMING • CAT STAY • CARE
 </p>
 
 <h1
-  id="heroTitle"
-  class="text-4xl md:text-6xl font-light text-[#556B5D] mt-3"
+data-i18n="heroTitle"
+class="text-4xl md:text-6xl font-light text-[#556B5D] mt-3"
 >
 Gentle Care,<br>Like Home.
 </h1>
 
 <p
-  id="hero"
-  class="mt-5 text-lg leading-8"
+data-i18n="heroText"
+class="mt-5 text-lg leading-8"
 >
 ดูแลน้องหมาและน้องแมวด้วยบรรยากาศอบอุ่น เป็นกันเอง และใส่ใจในทุกรายละเอียด
 </p>
@@ -105,32 +120,33 @@ Gentle Care,<br>Like Home.
 <div class="flex flex-wrap gap-3 mt-7">
 
 <button
-  onclick="showPage('booking')"
-  id="homeBookingBtn"
-  class="btn px-6 py-3 rounded-2xl"
+onclick="showPage('booking')"
+data-i18n="bookButton"
+class="btn px-6 py-3 rounded-2xl"
 >
 จองคิวกรูมมิ่ง
 </button>
 
 <button
-  onclick="showPage('prices')"
-  id="homePriceBtn"
-  class="px-6 py-3 rounded-2xl border border-[#DDD6C7]"
+onclick="showPage('prices')"
+data-i18n="priceButton"
+class="px-6 py-3 rounded-2xl border border-[#DDD6C7]"
 >
 เช็คค่าบริการ
 </button>
 
 </div>
+
 </div>
 
 
 <div class="card rounded-[2rem] p-4 shadow-sm min-h-64 flex items-center justify-center">
 
 <img
-  src="logo.jpg"
-  alt="Lunessa Pet Boutique"
-  class="max-h-72 w-full object-contain rounded-[1.5rem]"
-  onerror="this.alt='Lunessa Pet Boutique';this.style.opacity='.15'"
+src="logo.jpg"
+alt="Lunessa Pet Boutique"
+class="max-h-72 w-full object-contain rounded-[1.5rem]"
+onerror="this.alt='Lunessa Pet Boutique';this.style.opacity='.15'"
 >
 
 </div>
@@ -143,55 +159,55 @@ Gentle Care,<br>Like Home.
 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
 <button
-  onclick="showInfo('wallet')"
-  class="card rounded-3xl p-6 text-left"
+onclick="showInfo('wallet')"
+class="card rounded-3xl p-6 text-left"
 >
-<b id="walletTitle">Wallet</b>
-<p id="walletDesc" class="text-sm mt-2">
+<b data-i18n="walletTitle">Wallet</b>
+<p data-i18n="walletShort" class="text-sm mt-2">
 เครดิตสำหรับใช้บริการในอนาคต
 </p>
 </button>
 
 
 <button
-  onclick="showPage('booking')"
-  class="card rounded-3xl p-6 text-left"
+onclick="showPage('booking')"
+class="card rounded-3xl p-6 text-left"
 >
-<b id="bookingCardTitle">จองคิวกรูมมิ่ง</b>
-<p id="bookingCardDesc" class="text-sm mt-2">
+<b data-i18n="bookingCardTitle">จองคิวกรูมมิ่ง</b>
+<p data-i18n="bookingCardText" class="text-sm mt-2">
 เลือกวัน เวลา น้อง และบริการ
 </p>
 </button>
 
 
 <button
-  onclick="showPage('prices')"
-  class="card rounded-3xl p-6 text-left"
+onclick="showPage('prices')"
+class="card rounded-3xl p-6 text-left"
 >
-<b id="priceCardTitle">เช็คค่าบริการ</b>
-<p id="priceCardDesc" class="text-sm mt-2">
+<b data-i18n="priceCardTitle">เช็คค่าบริการ</b>
+<p data-i18n="priceCardText" class="text-sm mt-2">
 ประเมินราคาเบื้องต้น
 </p>
 </button>
 
 
 <button
-  onclick="showInfo('catstay')"
-  class="card rounded-3xl p-6 text-left"
+onclick="showInfo('catstay')"
+class="card rounded-3xl p-6 text-left"
 >
-<b id="catstayTitle">ห้องพักน้องแมว</b>
-<p id="catstayDesc" class="text-sm mt-2">
+<b data-i18n="catStayTitle">ห้องพักน้องแมว</b>
+<p data-i18n="catStayText" class="text-sm mt-2">
 ข้อมูลบริการ
 </p>
 </button>
 
 
 <button
-  onclick="showInfo('products')"
-  class="card rounded-3xl p-6 text-left"
+onclick="showInfo('products')"
+class="card rounded-3xl p-6 text-left"
 >
-<b id="productsTitle">สินค้า</b>
-<p id="productsDesc" class="text-sm mt-2">
+<b data-i18n="productsTitle">สินค้า</b>
+<p data-i18n="productsText" class="text-sm mt-2">
 กำลังเตรียมเปิดให้บริการ
 </p>
 </button>
@@ -199,36 +215,38 @@ Gentle Care,<br>Like Home.
 
 <div class="card rounded-3xl p-6">
 
-<b id="socialTitle">Social Media</b>
+<b data-i18n="socialTitle">Social Media</b>
 
 <div class="flex gap-5 mt-3 text-[#556B5D]">
 
 <a
-  href="https://www.facebook.com/LunessaPetBoutique"
-  target="_blank"
-  rel="noopener"
+href="https://www.facebook.com/LunessaPetBoutique"
+target="_blank"
+rel="noopener"
 >
 Facebook
 </a>
 
 <a
-  href="https://www.instagram.com/lunessa_pet_boutique/"
-  target="_blank"
-  rel="noopener"
+href="https://www.instagram.com/lunessa_pet_boutique/"
+target="_blank"
+rel="noopener"
 >
 Instagram
 </a>
 
 </div>
+
 </div>
 
 </div>
+
 </section>
 
 </main>
 
 
-<!-- PRICE -->
+<!-- PRICES -->
 
 <section
 id="prices"
@@ -237,7 +255,7 @@ class="page hidden max-w-4xl mx-auto px-5 py-8"
 
 <button
 onclick="showPage('home')"
-id="priceBack"
+data-i18n="backHome"
 class="text-[#556B5D] mb-5"
 >
 ← กลับหน้าแรก
@@ -246,14 +264,14 @@ class="text-[#556B5D] mb-5"
 <div class="card rounded-3xl p-6 md:p-8">
 
 <h2
-id="priceHeading"
+data-i18n="priceTitle"
 class="text-3xl text-[#556B5D]"
 >
 เช็คค่าบริการ
 </h2>
 
 <p
-id="priceIntro"
+data-i18n="priceDescription"
 class="text-sm mt-2"
 >
 ราคาเป็นการประเมินเบื้องต้น ราคาจริงอาจปรับตามสภาพขนและสภาพน้อง
@@ -263,27 +281,32 @@ class="text-sm mt-2"
 <div class="grid md:grid-cols-2 gap-4 mt-6">
 
 <label>
-<span id="priceTypeLabel">ประเภท</span>
+
+<span data-i18n="typeLabel">ประเภท</span>
 
 <select
 id="priceType"
 class="w-full mt-2 p-3 rounded-xl border"
 onchange="loadPriceSizes()"
 >
-<option value="dog">สุนัข</option>
-<option value="cat">แมว</option>
+
+<option value="dog" data-i18n="dog">สุนัข</option>
+<option value="cat" data-i18n="cat">แมว</option>
+
 </select>
 
 </label>
 
 
 <label>
-<span id="priceSizeLabel">ไซส์ / น้ำหนัก</span>
+
+<span data-i18n="sizeLabel">ไซส์ / น้ำหนัก</span>
 
 <select
 id="priceSize"
 class="w-full mt-2 p-3 rounded-xl border"
-></select>
+>
+</select>
 
 <span
 id="priceWeightHint"
@@ -294,24 +317,28 @@ class="block text-xs text-gray-500 mt-1"
 
 
 <label>
-<span id="priceCoatLabel">ลักษณะขน</span>
+
+<span data-i18n="coatLabel">ลักษณะขน</span>
 
 <select
 id="priceCoat"
 class="w-full mt-2 p-3 rounded-xl border"
 onchange="loadPriceServices()"
-></select>
+>
+</select>
 
 </label>
 
 
 <label>
-<span id="priceServiceLabel">บริการ</span>
+
+<span data-i18n="serviceLabel">บริการ</span>
 
 <select
 id="priceService"
 class="w-full mt-2 p-3 rounded-xl border"
-></select>
+>
+</select>
 
 </label>
 
@@ -320,7 +347,7 @@ class="w-full mt-2 p-3 rounded-xl border"
 
 <button
 onclick="calculatePrice()"
-id="calculateBtn"
+data-i18n="calculateButton"
 class="btn w-full mt-6 py-4 rounded-2xl"
 >
 คำนวณราคา
@@ -333,6 +360,7 @@ class="hidden mt-5 p-5 rounded-2xl soft text-center"
 ></div>
 
 </div>
+
 </section>
 
 
@@ -345,7 +373,7 @@ class="page hidden max-w-5xl mx-auto px-5 py-8"
 
 <button
 onclick="showPage('home')"
-id="bookingBack"
+data-i18n="backHome"
 class="text-[#556B5D] mb-5"
 >
 ← กลับหน้าแรก
@@ -355,14 +383,14 @@ class="text-[#556B5D] mb-5"
 <div class="card rounded-3xl p-6 md:p-8">
 
 <h2
-id="bookingHeading"
+data-i18n="bookingTitle"
 class="text-3xl text-[#556B5D]"
 >
 จองคิวกรูมมิ่ง
 </h2>
 
 <p
-id="bookingIntro"
+data-i18n="bookingDescription"
 class="text-sm mt-2"
 >
 เลือกวันและบริการ ระบบจะตรวจสอบเวลาว่างจากตารางร้านโดยอัตโนมัติ
@@ -372,7 +400,8 @@ class="text-sm mt-2"
 <div class="grid md:grid-cols-2 gap-4 mt-6">
 
 <label>
-<span id="ownerLabel">ชื่อเจ้าของ</span>
+
+<span data-i18n="ownerLabel">ชื่อเจ้าของ</span>
 
 <input
 id="owner"
@@ -382,7 +411,8 @@ class="w-full mt-2 p-3 rounded-xl border"
 
 
 <label>
-<span id="phoneLabel">เบอร์ติดต่อ</span>
+
+<span data-i18n="phoneLabel">เบอร์ติดต่อ</span>
 
 <input
 id="phone"
@@ -393,7 +423,8 @@ inputmode="tel"
 
 
 <label>
-<span id="dateLabel">วันที่</span>
+
+<span data-i18n="dateLabel">วันที่</span>
 
 <input
 id="bookingDate"
@@ -404,13 +435,21 @@ class="w-full mt-2 p-3 rounded-xl border"
 
 
 <label>
-<span id="timeLabel">เวลา</span>
+
+<span data-i18n="timeLabel">เวลา</span>
 
 <select
 id="bookingTime"
 class="w-full mt-2 p-3 rounded-xl border"
 >
-<option value="">เลือกเวลา</option>
+
+<option
+value=""
+data-i18n="selectTime"
+>
+เลือกเวลา
+</option>
+
 </select>
 
 <div
@@ -428,7 +467,7 @@ class="time-note mt-1"
 <div class="mt-6 p-5 rounded-2xl soft">
 
 <h3
-id="pet1Heading"
+data-i18n="pet1Title"
 class="font-semibold text-[#556B5D]"
 >
 น้องตัวที่ 1
@@ -439,6 +478,7 @@ class="font-semibold text-[#556B5D]"
 <input
 id="pet1Name"
 class="p-3 rounded-xl border"
+data-placeholder="petNamePlaceholder"
 placeholder="ชื่อน้อง"
 >
 
@@ -447,8 +487,15 @@ placeholder="ชื่อน้อง"
 id="pet1Type"
 class="p-3 rounded-xl border"
 >
-<option value="dog">สุนัข</option>
-<option value="cat">แมว</option>
+
+<option value="dog" data-i18n="dog">
+สุนัข
+</option>
+
+<option value="cat" data-i18n="cat">
+แมว
+</option>
+
 </select>
 
 
@@ -456,14 +503,31 @@ class="p-3 rounded-xl border"
 id="pet1Service"
 class="p-3 rounded-xl border"
 >
-<option value="bath">อาบน้ำอย่างเดียว</option>
-<option value="clip">อาบน้ำ + ตัดไถ</option>
-<option value="scissor">อาบน้ำ + ตัดกรรไกร</option>
-<option value="haircut_only">ตัดขนอย่างเดียว</option>
-<option value="addon">บริการเสริมอย่างเดียว</option>
+
+<option value="bath" data-i18n="bathOnly">
+อาบน้ำอย่างเดียว
+</option>
+
+<option value="clip" data-i18n="bathClip">
+อาบน้ำ + ตัดไถ
+</option>
+
+<option value="scissor" data-i18n="bathScissor">
+อาบน้ำ + ตัดกรรไกร
+</option>
+
+<option value="haircut_only" data-i18n="haircutOnly">
+ตัดขนอย่างเดียว
+</option>
+
+<option value="addon" data-i18n="addon">
+บริการเสริมอย่างเดียว
+</option>
+
 </select>
 
 </div>
+
 </div>
 
 
@@ -472,12 +536,12 @@ class="p-3 rounded-xl border"
 <div class="mt-4 p-5 rounded-2xl soft">
 
 <h3
-id="pet2Heading"
+data-i18n="pet2Title"
 class="font-semibold text-[#556B5D]"
 >
 น้องตัวที่ 2
 <span
-id="pet2Optional"
+data-i18n="optional"
 class="font-normal text-sm"
 >
 (ถ้ามี)
@@ -490,6 +554,7 @@ class="font-normal text-sm"
 <input
 id="pet2Name"
 class="p-3 rounded-xl border"
+data-placeholder="petNamePlaceholder"
 placeholder="ชื่อน้อง"
 >
 
@@ -498,9 +563,19 @@ placeholder="ชื่อน้อง"
 id="pet2Type"
 class="p-3 rounded-xl border"
 >
-<option value="">ไม่เพิ่ม</option>
-<option value="dog">สุนัข</option>
-<option value="cat">แมว</option>
+
+<option value="" data-i18n="notAdd">
+ไม่เพิ่ม
+</option>
+
+<option value="dog" data-i18n="dog">
+สุนัข
+</option>
+
+<option value="cat" data-i18n="cat">
+แมว
+</option>
+
 </select>
 
 
@@ -508,14 +583,31 @@ class="p-3 rounded-xl border"
 id="pet2Service"
 class="p-3 rounded-xl border"
 >
-<option value="bath">อาบน้ำอย่างเดียว</option>
-<option value="clip">อาบน้ำ + ตัดไถ</option>
-<option value="scissor">อาบน้ำ + ตัดกรรไกร</option>
-<option value="haircut_only">ตัดขนอย่างเดียว</option>
-<option value="addon">บริการเสริมอย่างเดียว</option>
+
+<option value="bath" data-i18n="bathOnly">
+อาบน้ำอย่างเดียว
+</option>
+
+<option value="clip" data-i18n="bathClip">
+อาบน้ำ + ตัดไถ
+</option>
+
+<option value="scissor" data-i18n="bathScissor">
+อาบน้ำ + ตัดกรรไกร
+</option>
+
+<option value="haircut_only" data-i18n="haircutOnly">
+ตัดขนอย่างเดียว
+</option>
+
+<option value="addon" data-i18n="addon">
+บริการเสริมอย่างเดียว
+</option>
+
 </select>
 
 </div>
+
 </div>
 
 
@@ -528,6 +620,7 @@ class="mt-5 p-5 rounded-2xl border"
 <button
 id="checkoutButton"
 onclick="startCheckout()"
+data-i18n="checkoutButton"
 class="btn w-full mt-5 py-4 rounded-2xl text-lg"
 >
 ยืนยันและชำระมัดจำผ่าน Stripe
@@ -540,6 +633,7 @@ class="mt-4 text-center"
 ></div>
 
 </div>
+
 </section>
 
 
@@ -552,7 +646,7 @@ class="page hidden max-w-3xl mx-auto px-5 py-10"
 
 <button
 onclick="showPage('home')"
-id="infoBack"
+data-i18n="backHome"
 class="text-[#556B5D]"
 >
 ← กลับหน้าแรก
@@ -571,13 +665,16 @@ class="mt-4 leading-8"
 ></p>
 
 </div>
+
 </section>
 
 
 <script>
 
 /*************************************************
- * API — LIVE VERSION
+ * API
+ *
+ * ใช้ Web App URL ตัวล่าสุดที่ผ่านแล้ว
  *************************************************/
 
 const API_URL =
@@ -592,577 +689,333 @@ const LANG = {
 
 th:{
 
-heroKicker:"GROOMING • CAT STAY • CARE",
+heroTag:"GROOMING • CAT STAY • CARE",
 heroTitle:"Gentle Care,<br>Like Home.",
-hero:"ดูแลน้องหมาและน้องแมวด้วยบรรยากาศอบอุ่น เป็นกันเอง และใส่ใจในทุกรายละเอียด",
+heroText:"ดูแลน้องหมาและน้องแมวด้วยบรรยากาศอบอุ่น เป็นกันเอง และใส่ใจในทุกรายละเอียด",
 
-homeBooking:"จองคิวกรูมมิ่ง",
-homePrice:"เช็คค่าบริการ",
+bookButton:"จองคิวกรูมมิ่ง",
+priceButton:"เช็คค่าบริการ",
 
 walletTitle:"Wallet",
-walletDesc:"เครดิตสำหรับใช้บริการในอนาคต",
+walletShort:"เครดิตสำหรับใช้บริการในอนาคต",
 
 bookingCardTitle:"จองคิวกรูมมิ่ง",
-bookingCardDesc:"เลือกวัน เวลา น้อง และบริการ",
+bookingCardText:"เลือกวัน เวลา น้อง และบริการ",
 
 priceCardTitle:"เช็คค่าบริการ",
-priceCardDesc:"ประเมินราคาเบื้องต้น",
+priceCardText:"ประเมินราคาเบื้องต้น",
 
-catstayTitle:"ห้องพักน้องแมว",
-catstayDesc:"ข้อมูลบริการ",
+catStayTitle:"ห้องพักน้องแมว",
+catStayText:"ข้อมูลบริการ",
 
 productsTitle:"สินค้า",
-productsDesc:"กำลังเตรียมเปิดให้บริการ",
+productsText:"กำลังเตรียมเปิดให้บริการ",
 
 socialTitle:"Social Media",
 
 backHome:"← กลับหน้าแรก",
 
-priceHeading:"เช็คค่าบริการ",
-priceIntro:"ราคาเป็นการประเมินเบื้องต้น ราคาจริงอาจปรับตามสภาพขนและสภาพน้อง",
-priceType:"ประเภท",
-priceSize:"ไซส์ / น้ำหนัก",
-priceCoat:"ลักษณะขน",
-priceService:"บริการ",
-calculate:"คำนวณราคา",
+priceTitle:"เช็คค่าบริการ",
+priceDescription:"ราคาเป็นการประเมินเบื้องต้น ราคาจริงอาจปรับตามสภาพขนและสภาพน้อง",
+
+typeLabel:"ประเภท",
+sizeLabel:"ไซส์ / น้ำหนัก",
+coatLabel:"ลักษณะขน",
+serviceLabel:"บริการ",
 
 dog:"สุนัข",
 cat:"แมว",
 
-bookingHeading:"จองคิวกรูมมิ่ง",
-bookingIntro:"เลือกวันและบริการ ระบบจะตรวจสอบเวลาว่างจากตารางร้านโดยอัตโนมัติ",
-owner:"ชื่อเจ้าของ",
-phone:"เบอร์ติดต่อ",
-date:"วันที่",
-time:"เวลา",
+calculateButton:"คำนวณราคา",
 
+bookingTitle:"จองคิวกรูมมิ่ง",
+bookingDescription:"เลือกวันและบริการ ระบบจะตรวจสอบเวลาว่างจากตารางร้านโดยอัตโนมัติ",
+
+ownerLabel:"ชื่อเจ้าของ",
+phoneLabel:"เบอร์ติดต่อ",
+dateLabel:"วันที่",
+timeLabel:"เวลา",
 selectTime:"เลือกเวลา",
-loadingTime:"กำลังตรวจสอบเวลาว่าง...",
-noTime:"ไม่มีเวลาว่างสำหรับบริการนี้",
-timeLoadingNote:"กำลังตรวจสอบตารางร้าน...",
-timeAvailableNote:"แสดงเฉพาะเวลาที่มีช่องว่างต่อเนื่องเพียงพอสำหรับบริการที่เลือก",
-timeNoAvailableNote:"วันดังกล่าวไม่มีช่วงเวลาที่ว่างต่อเนื่องเพียงพอ",
-timeFailed:"โหลดเวลาไม่สำเร็จ",
-timeConnection:"เชื่อมต่อระบบตารางเวลาไม่สำเร็จ",
 
-pet1:"น้องตัวที่ 1",
-pet2:"น้องตัวที่ 2",
+pet1Title:"น้องตัวที่ 1",
+pet2Title:"น้องตัวที่ 2",
 optional:"(ถ้ามี)",
-petName:"ชื่อน้อง",
-noPet:"ไม่เพิ่ม",
+notAdd:"ไม่เพิ่ม",
+petNamePlaceholder:"ชื่อน้อง",
 
-bath:"อาบน้ำอย่างเดียว",
-clip:"อาบน้ำ + ตัดไถ",
-scissor:"อาบน้ำ + ตัดกรรไกร",
-haircut:"ตัดขนอย่างเดียว",
+bathOnly:"อาบน้ำอย่างเดียว",
+bathClip:"อาบน้ำ + ตัดไถ",
+bathScissor:"อาบน้ำ + ตัดกรรไกร",
+haircutOnly:"ตัดขนอย่างเดียว",
 addon:"บริการเสริมอย่างเดียว",
 
-summary:"สรุปการจอง",
-hours:"เวลาที่ต้องใช้:",
-deposit:"มัดจำ:",
-hour:"ชั่วโมง",
+checkoutButton:"ยืนยันและชำระมัดจำผ่าน Stripe",
 
-summaryEmpty:"กรอกข้อมูลน้องเพื่อดูเวลาและมัดจำ",
+selectTimeFirst:"กรุณาเลือกเวลา",
+loadingTimes:"กำลังตรวจสอบเวลาว่าง...",
+loadingSchedule:"กำลังตรวจสอบตารางร้าน...",
+noTimes:"ไม่มีเวลาว่างสำหรับบริการนี้",
+noTimesNote:"วันดังกล่าวไม่มีช่วงเวลาที่ว่างต่อเนื่องเพียงพอ",
+availableNote:"แสดงเฉพาะเวลาที่มีช่องว่างต่อเนื่องเพียงพอสำหรับบริการที่เลือก",
+loadFailed:"โหลดเวลาไม่สำเร็จ",
+connectFailed:"เชื่อมต่อระบบตารางเวลาไม่สำเร็จ",
 
-checkout:"ยืนยันและชำระมัดจำผ่าน Stripe",
-checking:"กำลังตรวจสอบคิว...",
-processing:"กำลังตรวจสอบคิวและสร้างการชำระเงิน...",
+summaryTitle:"สรุปการจอง",
+hoursRequired:"เวลาที่ต้องใช้",
+hoursUnit:"ชั่วโมง",
+deposit:"มัดจำ",
+baht:"฿",
 
+fillPet:"กรอกข้อมูลน้องเพื่อดูเวลาและมัดจำ",
+
+enterRequired:"กรุณากรอกชื่อ เบอร์ วันที่ และเวลาให้ครบ",
+processing:"กำลังตรวจสอบคิว...",
+processingDetail:"กำลังตรวจสอบคิวและสร้างการชำระเงิน...",
+
+petNameRequired1:"กรุณาใส่ชื่อน้องตัวที่ 1",
+petNameRequired2:"กรุณาใส่ชื่อน้องตัวที่ 2",
+
+paymentConfirm:"กำลังยืนยันการชำระเงิน...",
 bookingSuccess:"จองคิวสำเร็จ",
-bookingSaved:"ระบบบันทึกการจองเรียบร้อยแล้ว",
-bookingId:"Booking ID:",
-
-paymentChecking:"กำลังยืนยันการชำระเงิน...",
+systemSaved:"ระบบบันทึกการจองเรียบร้อยแล้ว",
 paymentCancelled:"การชำระเงินถูกยกเลิก ยังไม่มีการยืนยันการจอง",
 
-fillRequired:"กรุณากรอกชื่อ เบอร์ วันที่ และเวลาให้ครบ",
-pet1Required:"กรุณาใส่ชื่อน้องตัวที่ 1",
-pet2Required:"กรุณาใส่ชื่อน้องตัวที่ 2",
+priceApprox:"ราคาโดยประมาณ",
+weightRange:"ช่วงน้ำหนัก",
+serviceUnavailable:"บริการนี้ไม่มีในแพ็กเกจตามตารางร้าน",
 
 walletInfoTitle:"Lunessa Wallet",
-walletInfo:"Wallet จะเป็นเครดิตสำหรับใช้บริการในอนาคต เช่น เติมเงิน รับโบนัส และใช้ชำระค่าบริการ ระบบจะเปิดใช้งานเมื่อระบบสมาชิกพร้อม",
+walletInfoText:"Wallet จะเป็นเครดิตสำหรับใช้บริการในอนาคต เช่น เติมเงิน รับโบนัส และใช้ชำระค่าบริการ ระบบจะเปิดใช้งานเมื่อระบบสมาชิกพร้อม",
 
-catstayInfoTitle:"ห้องพักน้องแมว",
-catstayInfo:"Lunessa มีบริการห้องพักสำหรับน้องแมวในบรรยากาศเป็นกันเอง ระบบจองห้องพักจะเปิดในขั้นต่อไป",
+catInfoTitle:"ห้องพักน้องแมว",
+catInfoText:"Lunessa มีบริการห้องพักสำหรับน้องแมวในบรรยากาศเป็นกันเอง ระบบจองห้องพักจะเปิดในขั้นต่อไป",
 
 productsInfoTitle:"สินค้า",
-productsInfo:"ส่วนสินค้าเตรียมเปิดให้บริการในอนาคต",
+productsInfoText:"ส่วนสินค้าเตรียมเปิดให้บริการในอนาคต"
 
-estimated:"ราคาโดยประมาณ",
-weight:"ช่วงน้ำหนัก:",
-serviceUnavailable:"บริการนี้ไม่มีในแพ็กเกจตามตารางร้าน",
-grooming:"กรูมมิ่ง"
 },
 
 en:{
 
-heroKicker:"GROOMING • CAT STAY • CARE",
+heroTag:"GROOMING • CAT STAY • CARE",
 heroTitle:"Gentle Care,<br>Like Home.",
-hero:"Warm, friendly grooming and care for dogs and cats, with attention to every visit.",
+heroText:"Warm, friendly grooming and care for dogs and cats, with attention to every visit.",
 
-homeBooking:"Book Grooming",
-homePrice:"Check Prices",
+bookButton:"Book Grooming",
+priceButton:"Check Prices",
 
 walletTitle:"Wallet",
-walletDesc:"Credit for future services",
+walletShort:"Credit for future services",
 
 bookingCardTitle:"Book Grooming",
-bookingCardDesc:"Choose a date, time, pet and service",
+bookingCardText:"Choose a date, time, pet and service",
 
 priceCardTitle:"Check Prices",
-priceCardDesc:"Get an estimated service price",
+priceCardText:"Get an estimated service price",
 
-catstayTitle:"Cat Stay",
-catstayDesc:"Service information",
+catStayTitle:"Cat Stay",
+catStayText:"Service information",
 
 productsTitle:"Products",
-productsDesc:"Coming soon",
+productsText:"Coming soon",
 
 socialTitle:"Social Media",
 
-backHome:"← Back Home",
+backHome:"← Back to Home",
 
-priceHeading:"Check Prices",
-priceIntro:"Prices are estimates. Final prices may vary depending on coat and pet condition.",
-priceType:"Pet Type",
-priceSize:"Size / Weight",
-priceCoat:"Coat Type",
-priceService:"Service",
-calculate:"Calculate Price",
+priceTitle:"Check Service Prices",
+priceDescription:"Prices are estimates. Final prices may vary depending on coat and pet condition.",
+
+typeLabel:"Pet Type",
+sizeLabel:"Size / Weight",
+coatLabel:"Coat Type",
+serviceLabel:"Service",
 
 dog:"Dog",
 cat:"Cat",
 
-bookingHeading:"Book Grooming",
-bookingIntro:"Choose a date and service. The system will automatically check availability from the shop schedule.",
-owner:"Owner Name",
-phone:"Phone Number",
-date:"Date",
-time:"Time",
+calculateButton:"Calculate Price",
 
+bookingTitle:"Book Grooming",
+bookingDescription:"Choose a date and service. The system will automatically check the shop schedule.",
+
+ownerLabel:"Owner Name",
+phoneLabel:"Phone Number",
+dateLabel:"Date",
+timeLabel:"Time",
 selectTime:"Select time",
-loadingTime:"Checking availability...",
-noTime:"No available time for this service",
-timeLoadingNote:"Checking the shop schedule...",
-timeAvailableNote:"Only time slots with enough consecutive availability are shown.",
-timeNoAvailableNote:"There are not enough consecutive available slots on this date.",
-timeFailed:"Failed to load available times",
-timeConnection:"Could not connect to the booking schedule",
 
-pet1:"Pet 1",
-pet2:"Pet 2",
+pet1Title:"Pet 1",
+pet2Title:"Pet 2",
 optional:"(optional)",
-petName:"Pet name",
-noPet:"Do not add",
+notAdd:"Not added",
+petNamePlaceholder:"Pet name",
 
-bath:"Bath only",
-clip:"Bath + Clipper",
-scissor:"Bath + Scissor",
-haircut:"Haircut only",
+bathOnly:"Bath only",
+bathClip:"Bath + Clipper",
+bathScissor:"Bath + Scissor",
+haircutOnly:"Haircut only",
 addon:"Add-on service only",
 
-summary:"Booking Summary",
-hours:"Required time:",
-deposit:"Deposit:",
-hour:"hours",
+checkoutButton:"Confirm & Pay Deposit via Stripe",
 
-summaryEmpty:"Enter pet information to see time and deposit",
+selectTimeFirst:"Please select a time",
+loadingTimes:"Checking availability...",
+loadingSchedule:"Checking shop schedule...",
+noTimes:"No available times for this service",
+noTimesNote:"There are not enough consecutive available slots on this date.",
+availableNote:"Only times with enough consecutive availability are shown.",
+loadFailed:"Failed to load available times",
+connectFailed:"Could not connect to the schedule system",
 
-checkout:"Confirm & Pay Deposit via Stripe",
-checking:"Checking availability...",
-processing:"Checking availability and creating payment...",
+summaryTitle:"Booking Summary",
+hoursRequired:"Required time",
+hoursUnit:"hours",
+deposit:"Deposit",
+baht:"฿",
 
-bookingSuccess:"Booking Confirmed",
-bookingSaved:"Your booking has been recorded successfully.",
-bookingId:"Booking ID:",
+fillPet:"Enter pet information to see required time and deposit.",
 
-paymentChecking:"Confirming payment...",
+enterRequired:"Please complete the owner name, phone, date and time.",
+processing:"Checking availability...",
+processingDetail:"Checking the booking and creating payment...",
+
+petNameRequired1:"Please enter Pet 1's name.",
+petNameRequired2:"Please enter Pet 2's name.",
+
+paymentConfirm:"Confirming payment...",
+bookingSuccess:"Booking confirmed",
+systemSaved:"Your booking has been recorded successfully.",
 paymentCancelled:"Payment was cancelled. The booking has not been confirmed.",
 
-fillRequired:"Please enter your name, phone number, date and time.",
-pet1Required:"Please enter the name of Pet 1.",
-pet2Required:"Please enter the name of Pet 2.",
+priceApprox:"Estimated price",
+weightRange:"Weight range",
+serviceUnavailable:"This service is not available for the selected package.",
 
 walletInfoTitle:"Lunessa Wallet",
-walletInfo:"Wallet credit can be used for future services. Top up, receive bonuses and use your credit to pay for services. Membership features will be available soon.",
+walletInfoText:"Wallet credit can be used for future services, including top-ups, bonuses and service payments. The membership system will be available soon.",
 
-catstayInfoTitle:"Cat Stay",
-catstayInfo:"Lunessa provides a comfortable and friendly stay service for cats. Online room booking will be available in a future update.",
+catInfoTitle:"Cat Stay",
+catInfoText:"Lunessa offers a friendly stay service for cats. Online room booking will be available in a future step.",
 
 productsInfoTitle:"Products",
-productsInfo:"Our product collection is coming soon.",
+productsInfoText:"Our product collection is coming soon."
 
-estimated:"Estimated price",
-weight:"Weight range:",
-serviceUnavailable:"This service is not available for the selected package.",
-grooming:"Grooming"
 },
 
 zh:{
 
-heroKicker:"美容 • 猫咪寄宿 • 照护",
-heroTitle:"温柔照护，<br>如同在家。",
-hero:"为狗狗和猫咪提供温暖、安心的美容与照护服务，用心对待每一次到店。",
+heroTag:"美容 • 猫咪住宿 • 照护",
+heroTitle:"温柔照护，<br>像在家一样。",
+heroText:"为狗狗和猫咪提供温暖、安心的美容与照护服务，用心对待每一次到店。",
 
-homeBooking:"预约美容",
-homePrice:"查看价格",
+bookButton:"预约美容",
+priceButton:"查看价格",
 
 walletTitle:"Wallet",
-walletDesc:"可用于未来服务的账户余额",
+walletShort:"可用于未来服务的余额",
 
 bookingCardTitle:"预约美容",
-bookingCardDesc:"选择日期、时间、宠物和服务",
+bookingCardText:"选择日期、时间、宠物和服务",
 
 priceCardTitle:"查看价格",
-priceCardDesc:"查看服务预估价格",
+priceCardText:"查看预计服务价格",
 
-catstayTitle:"猫咪寄宿",
-catstayDesc:"服务介绍",
+catStayTitle:"猫咪住宿",
+catStayText:"服务信息",
 
-productsTitle:"产品",
-productsDesc:"即将推出",
+productsTitle:"商品",
+productsText:"即将推出",
 
 socialTitle:"社交媒体",
 
 backHome:"← 返回首页",
 
-priceHeading:"查看服务价格",
-priceIntro:"价格仅供参考，最终价格可能根据毛发及宠物状况调整。",
-priceType:"宠物类型",
-priceSize:"体型 / 重量",
-priceCoat:"毛发类型",
-priceService:"服务",
-calculate:"计算价格",
+priceTitle:"查看服务价格",
+priceDescription:"价格仅供参考，实际价格可能根据毛发及宠物状态调整。",
+
+typeLabel:"宠物类型",
+sizeLabel:"体型 / 体重",
+coatLabel:"毛发类型",
+serviceLabel:"服务",
 
 dog:"狗狗",
 cat:"猫咪",
 
-bookingHeading:"预约美容",
-bookingIntro:"选择日期和服务，系统会自动根据店铺时间表检查可预约时间。",
-owner:"主人姓名",
-phone:"联系电话",
-date:"日期",
-time:"时间",
+calculateButton:"计算价格",
 
+bookingTitle:"预约美容",
+bookingDescription:"选择日期和服务，系统会自动从店铺时间表检查可用时间。",
+
+ownerLabel:"主人姓名",
+phoneLabel:"联系电话",
+dateLabel:"日期",
+timeLabel:"时间",
 selectTime:"选择时间",
-loadingTime:"正在检查可预约时间...",
-noTime:"该服务没有可预约时间",
-timeLoadingNote:"正在检查店铺时间表...",
-timeAvailableNote:"仅显示有足够连续空档的时间。",
-timeNoAvailableNote:"当天没有足够连续的可用时间。",
-timeFailed:"无法加载可预约时间",
-timeConnection:"无法连接预约时间系统",
 
-pet1:"宠物 1",
-pet2:"宠物 2",
+pet1Title:"宠物 1",
+pet2Title:"宠物 2",
 optional:"（可选）",
-petName:"宠物名字",
-noPet:"不添加",
+notAdd:"不添加",
+petNamePlaceholder:"宠物名字",
 
-bath:"单独洗澡",
-clip:"洗澡 + 推剪",
-scissor:"洗澡 + 剪刀修剪",
-haircut:"单独剪毛",
-addon:"附加服务",
+bathOnly:"仅洗澡",
+bathClip:"洗澡 + 推剪",
+bathScissor:"洗澡 + 剪刀修剪",
+haircutOnly:"仅剪毛",
+addon:"仅附加服务",
 
-summary:"预约摘要",
-hours:"所需时间：",
-deposit:"订金：",
-hour:"小时",
+checkoutButton:"确认并通过 Stripe 支付订金",
 
-summaryEmpty:"填写宠物资料后即可查看所需时间和订金",
+selectTimeFirst:"请选择时间",
+loadingTimes:"正在检查可用时间...",
+loadingSchedule:"正在检查店铺时间表...",
+noTimes:"该服务没有可用时间",
+noTimesNote:"当天没有足够的连续空闲时段。",
+availableNote:"仅显示满足服务所需连续时间的可用时段。",
+loadFailed:"无法加载可用时间",
+connectFailed:"无法连接时间表系统",
 
-checkout:"确认并通过 Stripe 支付订金",
-checking:"正在检查预约...",
-processing:"正在检查时间并创建付款...",
+summaryTitle:"预约摘要",
+hoursRequired:"所需时间",
+hoursUnit:"小时",
+deposit:"订金",
+baht:"฿",
 
+fillPet:"填写宠物信息后即可查看所需时间和订金。",
+
+enterRequired:"请完整填写主人姓名、电话、日期和时间。",
+processing:"正在检查预约...",
+processingDetail:"正在检查时间并创建付款页面...",
+
+petNameRequired1:"请输入宠物 1 的名字。",
+petNameRequired2:"请输入宠物 2 的名字。",
+
+paymentConfirm:"正在确认付款...",
 bookingSuccess:"预约成功",
-bookingSaved:"预约资料已成功保存。",
-bookingId:"预约编号：",
-
-paymentChecking:"正在确认付款...",
+systemSaved:"预约已成功记录。",
 paymentCancelled:"付款已取消，预约尚未确认。",
 
-fillRequired:"请填写姓名、电话、日期和时间。",
-pet1Required:"请输入宠物 1 的名字。",
-pet2Required:"请输入宠物 2 的名字。",
+priceApprox:"预计价格",
+weightRange:"体重范围",
+serviceUnavailable:"根据店铺价格表，该服务不适用于当前选择。",
 
 walletInfoTitle:"Lunessa Wallet",
-walletInfo:"Wallet 可作为未来服务的余额使用，可以充值、获得奖励并用于支付服务费用。会员系统准备完成后将开放。",
+walletInfoText:"Wallet 可用于未来服务，例如充值、获得奖励以及支付服务费用。会员系统准备完成后将正式开放。",
 
-catstayInfoTitle:"猫咪寄宿",
-catstayInfo:"Lunessa 提供舒适、友善的猫咪寄宿服务。线上房间预约功能将在后续开放。",
+catInfoTitle:"猫咪住宿",
+catInfoText:"Lunessa 提供温馨的猫咪住宿服务。线上房间预约将在下一阶段开放。",
 
-productsInfoTitle:"产品",
-productsInfo:"我们的产品系列即将推出。",
+productsInfoTitle:"商品",
+productsInfoText:"我们的商品系列即将推出。"
 
-estimated:"预估价格",
-weight:"重量范围：",
-serviceUnavailable:"根据店铺价格表，所选套餐没有此服务。",
-grooming:"美容"
 }
 
 };
 
 
 /*************************************************
- * CURRENT LANGUAGE
- *************************************************/
-
-let currentLang =
-localStorage.getItem('lunessa_lang') || 'th';
-
-
-function t(key){
-
-return LANG[currentLang][key] ||
-LANG.th[key] ||
-key;
-
-}
-
-
-/*************************************************
- * DOM
- *************************************************/
-
-const $ = id =>
-document.getElementById(id);
-
-
-/*************************************************
- * LANGUAGE APPLY
- *************************************************/
-
-function setLang(lang){
-
-if(!LANG[lang]){
-lang='th';
-}
-
-currentLang=lang;
-
-localStorage.setItem(
-'lunessa_lang',
-lang
-);
-
-document.documentElement.lang =
-lang === 'zh'
-? 'zh'
-: lang === 'en'
-? 'en'
-: 'th';
-
-applyLanguage();
-
-updateSummary();
-
-loadPriceSizes();
-
-}
-
-
-function applyLanguage(){
-
-const map = {
-
-heroKicker:'heroKicker',
-hero:'hero',
-
-homeBooking:'homeBookingBtn',
-homePrice:'homePriceBtn',
-
-walletTitle:'walletTitle',
-walletDesc:'walletDesc',
-
-bookingCardTitle:'bookingCardTitle',
-bookingCardDesc:'bookingCardDesc',
-
-priceCardTitle:'priceCardTitle',
-priceCardDesc:'priceCardDesc',
-
-catstayTitle:'catstayTitle',
-catstayDesc:'catstayDesc',
-
-productsTitle:'productsTitle',
-productsDesc:'productsDesc',
-
-socialTitle:'socialTitle',
-
-priceBack:'backHome',
-priceHeading:'priceHeading',
-priceIntro:'priceIntro',
-priceTypeLabel:'priceType',
-priceSizeLabel:'priceSize',
-priceCoatLabel:'priceCoat',
-priceServiceLabel:'priceService',
-calculateBtn:'calculate',
-
-bookingBack:'backHome',
-bookingHeading:'bookingHeading',
-bookingIntro:'bookingIntro',
-ownerLabel:'owner',
-phoneLabel:'phone',
-dateLabel:'date',
-timeLabel:'time',
-
-pet1Heading:'pet1',
-pet2Heading:'pet2',
-
-infoBack:'backHome'
-
-};
-
-
-Object.keys(map).forEach(function(id){
-
-const key=map[id];
-const el=$(id);
-
-if(!el)return;
-
-el.innerHTML=t(key);
-
-});
-
-
-$('pet2Optional').textContent=t('optional');
-
-$('pet1Name').placeholder=t('petName');
-$('pet2Name').placeholder=t('petName');
-
-$('checkoutButton').textContent=t('checkout');
-
-$('heroTitle').innerHTML=t('heroTitle');
-
-
-updateServiceOptions();
-
-}
-
-
-/*************************************************
- * SERVICE OPTIONS
- *************************************************/
-
-function updateServiceOptions(){
-
-const options=[
-
-['bath','bath'],
-['clip','clip'],
-['scissor','scissor'],
-['haircut','haircut'],
-['addon','addon']
-
-];
-
-['pet1Service','pet2Service'].forEach(function(id){
-
-const select=$(id);
-
-if(!select)return;
-
-const current=select.value || 'bath';
-
-select.innerHTML='';
-
-options.forEach(function(item){
-
-const option=document.createElement('option');
-
-option.value=item[0];
-
-option.textContent=t(item[1]);
-
-select.appendChild(option);
-
-});
-
-select.value=current;
-
-});
-
-
-const type1=$('pet1Type');
-const type2=$('pet2Type');
-
-if(type1){
-
-type1.options[0].textContent=t('dog');
-type1.options[1].textContent=t('cat');
-
-}
-
-if(type2){
-
-type2.options[0].textContent=t('noPet');
-type2.options[1].textContent=t('dog');
-type2.options[2].textContent=t('cat');
-
-}
-
-}
-
-
-/*************************************************
- * PAGE
- *************************************************/
-
-function showPage(id){
-
-document
-.querySelectorAll('.page')
-.forEach(function(page){
-page.classList.add('hidden');
-});
-
-$(id).classList.remove('hidden');
-
-window.scrollTo({
-top:0,
-behavior:'smooth'
-});
-
-}
-
-
-/*************************************************
- * INFO
- *************************************************/
-
-function showInfo(type){
-
-showPage('info');
-
-const data={
-
-wallet:[
-t('walletInfoTitle'),
-t('walletInfo')
-],
-
-catstay:[
-t('catstayInfoTitle'),
-t('catstayInfo')
-],
-
-products:[
-t('productsInfoTitle'),
-t('productsInfo')
-]
-
-};
-
-$('infoTitle').textContent=data[type][0];
-$('infoText').textContent=data[type][1];
-
-}
-
-
-/*************************************************
- * PRICE DATA
+ * PRICES
  *************************************************/
 
 const DOG_PRICES={
@@ -1221,7 +1074,6 @@ medium:'ขนกลาง / ขนชั้นสอง',
 long:'ขนยาว / ขนสองชั้น / ขนหนาพิเศษ'
 };
 
-
 const CAT_COATS={
 short:'ขนสั้น / ขนชั้นเดียว (แมวไทย)',
 long:'ขนสองชั้น / ขนยาว'
@@ -1229,53 +1081,159 @@ long:'ขนสองชั้น / ขนยาว'
 
 
 /*************************************************
- * PRICE TRANSLATION
+ * HELPERS
  *************************************************/
 
-function coatName(type,coat){
+const $=id=>document.getElementById(id);
 
-const names={
-
-th:{
-short:type==='dog'
-?'ขนสั้น / ขนชั้นเดียว'
-:'ขนสั้น / ขนชั้นเดียว (แมวไทย)',
-medium:'ขนกลาง / ขนชั้นสอง',
-long:'ขนยาว / ขนสองชั้น / ขนหนาพิเศษ'
-},
-
-en:{
-short:type==='dog'
-?'Short / single coat'
-:'Short / single coat (Thai cat)',
-medium:'Medium / double coat',
-long:'Long / double / heavy coat'
-},
-
-zh:{
-short:type==='dog'
-?'短毛 / 单层毛'
-:'短毛 / 单层毛（泰国猫）',
-medium:'中等毛发 / 双层毛',
-long:'长毛 / 双层毛 / 浓密毛'
+function currentLang(){
+return localStorage.getItem('lunessa_lang') || 'th';
 }
 
-};
-
-return names[currentLang][coat] || coat;
-
+function t(key){
+const lang=currentLang();
+return (
+LANG[lang] &&
+LANG[lang][key]
+) || LANG.th[key] || key;
 }
 
 
-function weightText(value){
+/*************************************************
+ * LANGUAGE
+ *************************************************/
 
-return value;
+function setLang(lang){
+
+if(!LANG[lang]){
+lang='th';
+}
+
+localStorage.setItem(
+'lunessa_lang',
+lang
+);
+
+document.documentElement.lang=
+lang==='zh'?'zh':lang;
+
+document
+.querySelectorAll('[data-i18n]')
+.forEach(function(el){
+
+const key=
+el.getAttribute('data-i18n');
+
+if(LANG[lang][key]){
+el.innerHTML=
+LANG[lang][key];
+}
+
+});
+
+
+document
+.querySelectorAll('[data-placeholder]')
+.forEach(function(el){
+
+const key=
+el.getAttribute('data-placeholder');
+
+if(LANG[lang][key]){
+el.placeholder=
+LANG[lang][key];
+}
+
+});
+
+
+$('langTH').classList.remove('lang-active');
+$('langEN').classList.remove('lang-active');
+$('langZH').classList.remove('lang-active');
+
+if(lang==='th'){
+$('langTH').classList.add('lang-active');
+}
+
+if(lang==='en'){
+$('langEN').classList.add('lang-active');
+}
+
+if(lang==='zh'){
+$('langZH').classList.add('lang-active');
+}
+
+
+/*
+ * Rebuild dynamic elements in the selected language.
+ */
+loadPriceSizes();
+updateSummary();
 
 }
 
 
 /*************************************************
- * PRICE
+ * PAGE
+ *************************************************/
+
+function showPage(id){
+
+document
+.querySelectorAll('.page')
+.forEach(function(page){
+page.classList.add('hidden');
+});
+
+const target=$(id);
+
+if(target){
+target.classList.remove('hidden');
+}
+
+window.scrollTo({
+top:0,
+behavior:'smooth'
+});
+
+}
+
+
+/*************************************************
+ * INFO
+ *************************************************/
+
+function showInfo(type){
+
+showPage('info');
+
+const data={
+
+wallet:[
+t('walletInfoTitle'),
+t('walletInfoText')
+],
+
+catstay:[
+t('catInfoTitle'),
+t('catInfoText')
+],
+
+products:[
+t('productsInfoTitle'),
+t('productsInfoText')
+]
+
+};
+
+$('infoTitle').textContent=data[type][0];
+$('infoText').textContent=data[type][1];
+
+}
+
+
+/*************************************************
+ * PRICE SYSTEM
  *************************************************/
 
 function loadPriceSizes(){
@@ -1283,35 +1241,55 @@ function loadPriceSizes(){
 const type=$('priceType').value;
 
 const coat=$('priceCoat');
-
 const size=$('priceSize');
 
 const coats=
 type==='dog'
-? DOG_COATS
-: CAT_COATS;
+?DOG_COATS
+:CAT_COATS;
 
-const previousCoat=coat.value;
 
 coat.innerHTML='';
 
-Object.keys(coats).forEach(function(key){
+Object
+.entries(coats)
+.forEach(function(entry){
 
-const option=document.createElement('option');
+const option=
+document.createElement('option');
 
-option.value=key;
-option.textContent=coatName(type,key);
+option.value=entry[0];
+
+option.textContent=
+entry[1];
 
 coat.appendChild(option);
 
 });
 
-if(
-previousCoat &&
-coats[previousCoat]
-){
-coat.value=previousCoat;
-}
+
+const data=
+type==='dog'
+?DOG_PRICES.short
+:CAT_PRICES.short;
+
+size.innerHTML='';
+
+Object
+.entries(data)
+.forEach(function(entry){
+
+const option=
+document.createElement('option');
+
+option.value=entry[0];
+
+option.textContent=
+entry[0]+' — '+entry[1].weight;
+
+size.appendChild(option);
+
+});
 
 loadPriceServices();
 
@@ -1325,59 +1303,42 @@ const coat=$('priceCoat').value;
 
 const data=
 type==='dog'
-? DOG_PRICES[coat]
-: CAT_PRICES[coat];
-
-const size=$('priceSize');
-
-const previousSize=size.value;
-
-size.innerHTML='';
-
-Object.keys(data).forEach(function(key){
-
-const option=document.createElement('option');
-
-option.value=key;
-
-option.textContent=
-key+' — '+data[key].weight;
-
-size.appendChild(option);
-
-});
-
-if(
-previousSize &&
-data[previousSize]
-){
-size.value=previousSize;
-}
+?DOG_PRICES[coat]
+:CAT_PRICES[coat];
 
 const service=$('priceService');
-
-const previousService=service.value;
 
 service.innerHTML='';
 
 const names={
 
-bath:t('bath'),
-clip:t('clip'),
-scissor:t('scissor')
+bath:t('bathOnly'),
+clip:t('bathClip'),
+scissor:t('bathScissor')
 
 };
 
 const first=
-data[Object.keys(data)[0]];
+data[
+Object.keys(data)[0]
+];
 
-['bath','clip','scissor']
+
+Object
+.keys(first)
 .filter(function(key){
-return first[key] != null;
+
+return[
+'bath',
+'clip',
+'scissor'
+].includes(key);
+
 })
 .forEach(function(key){
 
-const option=document.createElement('option');
+const option=
+document.createElement('option');
 
 option.value=key;
 option.textContent=names[key];
@@ -1385,13 +1346,6 @@ option.textContent=names[key];
 service.appendChild(option);
 
 });
-
-if(
-previousService &&
-data[Object.keys(data)[0]][previousService] != null
-){
-service.value=previousService;
-}
 
 updatePriceWeight();
 
@@ -1406,13 +1360,14 @@ const size=$('priceSize').value;
 
 const data=
 type==='dog'
-? DOG_PRICES[coat]
-: CAT_PRICES[coat];
+?DOG_PRICES[coat]
+:CAT_PRICES[coat];
 
 if(data && data[size]){
 
 $('priceWeightHint').textContent=
-t('weight')+' '+data[size].weight;
+t('weightRange')+': '+
+data[size].weight;
 
 }
 
@@ -1432,25 +1387,25 @@ box.classList.remove('hidden');
 
 const data=
 type==='dog'
-? DOG_PRICES[coat]
-: CAT_PRICES[coat];
+?DOG_PRICES[coat]
+:CAT_PRICES[coat];
 
 const row=data[size];
 
 const names={
 
-bath:t('bath'),
-clip:t('clip'),
-scissor:t('scissor')
+bath:t('bathOnly'),
+clip:t('bathClip'),
+scissor:t('bathScissor')
 
 };
 
-if(row && row[service] != null){
+if(row && row[service]!=null){
 
 box.innerHTML=`
 
 <div class="text-sm">
-${t('estimated')}
+${t('priceApprox')}
 </div>
 
 <div class="text-3xl font-semibold text-[#556B5D] mt-1">
@@ -1462,7 +1417,11 @@ ${size} • ${row.weight}
 </div>
 
 <div class="text-sm">
-${coatName(type,coat)}
+${
+type==='dog'
+?DOG_COATS[coat]
+:CAT_COATS[coat]
+}
 •
 ${names[service]}
 </div>
@@ -1494,7 +1453,8 @@ service==='clip' ||
 service==='scissor'
 )return 3;
 
-if(service==='haircut_only')return 2;
+if(service==='haircut_only')
+return 2;
 
 return 1;
 
@@ -1506,9 +1466,7 @@ function depositPerPet(service){
 if(
 service==='clip' ||
 service==='scissor'
-){
-return 400;
-}
+)return 400;
 
 return 200;
 
@@ -1558,14 +1516,22 @@ return x==='bath';
 
 const grooming=
 services.filter(function(x){
-return x==='clip' || x==='scissor';
+return(
+x==='clip' ||
+x==='scissor'
+);
 }).length;
 
-if(baths===1 && grooming===1)return 3;
+if(
+baths===1 &&
+grooming===1
+)return 3;
 
-if(grooming===2)return 4;
+if(grooming===2)
+return 4;
 
-if(baths===2)return 3;
+if(baths===2)
+return 3;
 
 return services.reduce(
 function(total,service){
@@ -1583,11 +1549,15 @@ return pets.reduce(
 function(total,pet){
 
 return total+
-depositPerPet(pet.service);
+depositPerPet(
+pet.service
+);
 
 },
 0
 );
+
+}
 
 
 /*************************************************
@@ -1609,7 +1579,7 @@ service:$('pet1Service').value
 if(!pets[0].name){
 
 throw new Error(
-t('pet1Required')
+t('petNameRequired1')
 );
 
 }
@@ -1619,7 +1589,7 @@ if($('pet2Type').value){
 if(!$('pet2Name').value.trim()){
 
 throw new Error(
-t('pet2Required')
+t('petNameRequired2')
 );
 
 }
@@ -1627,7 +1597,9 @@ t('pet2Required')
 pets.push({
 
 name:$('pet2Name').value.trim(),
+
 type:$('pet2Type').value,
+
 service:$('pet2Service').value
 
 });
@@ -1640,27 +1612,23 @@ return pets;
 
 
 /*************************************************
- * SERVICE TEXT
+ * SUMMARY
  *************************************************/
 
 function serviceText(service){
 
-return {
+return{
 
-bath:t('bath'),
-clip:t('clip'),
-scissor:t('scissor'),
-haircut_only:t('haircut'),
+bath:t('bathOnly'),
+clip:t('bathClip'),
+scissor:t('bathScissor'),
+haircut_only:t('haircutOnly'),
 addon:t('addon')
 
-}[service] || service;
+}[service]||service;
 
 }
 
-
-/*************************************************
- * SUMMARY
- *************************************************/
 
 function updateSummary(){
 
@@ -1669,36 +1637,41 @@ try{
 const pets=getPets();
 
 const hours=bookingHours(pets);
-
 const deposit=depositTotal(pets);
 
 $('summary').innerHTML=`
 
 <div class="text-[#556B5D] font-semibold">
-${t('summary')}
+${t('summaryTitle')}
 </div>
 
 <div class="mt-2">
+
 ${pets.map(function(pet){
 
-return `
+return`
+
 ${pet.name}
 —
-${pet.type==='dog'?t('dog'):t('cat')}
+${pet.type==='dog'
+?t('dog')
+:t('cat')}
 —
 ${serviceText(pet.service)}
+
 `;
 
 }).join('<br>')}
+
 </div>
 
 <div class="mt-3">
-${t('hours')}
-<b>${hours} ${t('hour')}</b>
+${t('hoursRequired')}:
+<b>${hours} ${t('hoursUnit')}</b>
 </div>
 
 <div>
-${t('deposit')}
+${t('deposit')}:
 <b>฿${deposit.toLocaleString()}</b>
 </div>
 
@@ -1708,7 +1681,7 @@ ${t('deposit')}
 
 $('summary').innerHTML=
 '<span class="text-gray-500">'+
-t('summaryEmpty')+
+t('fillPet')+
 '</span>';
 
 }
@@ -1732,21 +1705,25 @@ select.innerHTML=
 t('selectTime')+
 '</option>';
 
+$('timeNote').textContent='';
+
 return;
 
 }
 
-const pets=getSelectedPetsForCalculation();
+const pets=
+getSelectedPetsForCalculation();
 
-const hours=bookingHours(pets);
+const hours=
+bookingHours(pets);
 
 select.innerHTML=
 '<option value="">'+
-t('loadingTime')+
+t('loadingTimes')+
 '</option>';
 
 $('timeNote').textContent=
-t('timeLoadingNote');
+t('loadingSchedule');
 
 try{
 
@@ -1758,7 +1735,8 @@ encodeURIComponent(date)+
 '&hours='+
 encodeURIComponent(hours);
 
-const response=await fetch(url);
+const response=
+await fetch(url);
 
 if(!response.ok){
 
@@ -1768,13 +1746,14 @@ throw new Error(
 
 }
 
-const data=await response.json();
+const data=
+await response.json();
 
 if(!data.ok){
 
 throw new Error(
 data.message ||
-t('timeFailed')
+'API error'
 );
 
 }
@@ -1785,9 +1764,9 @@ t('selectTime')+
 '</option>';
 
 const available=
-Object.entries(
-data.slots || {}
-).filter(function(entry){
+Object
+.entries(data.slots||{})
+.filter(function(entry){
 return entry[1]===true;
 });
 
@@ -1795,11 +1774,11 @@ if(available.length===0){
 
 select.innerHTML=
 '<option value="">'+
-t('noTime')+
+t('noTimes')+
 '</option>';
 
 $('timeNote').textContent=
-t('timeNoAvailableNote');
+t('noTimesNote');
 
 return;
 
@@ -1818,7 +1797,7 @@ select.appendChild(option);
 });
 
 $('timeNote').textContent=
-t('timeAvailableNote');
+t('availableNote');
 
 }catch(error){
 
@@ -1826,11 +1805,11 @@ console.error(error);
 
 select.innerHTML=
 '<option value="">'+
-t('timeFailed')+
+t('loadFailed')+
 '</option>';
 
 $('timeNote').textContent=
-t('timeConnection');
+t('connectFailed');
 
 }
 
@@ -1856,7 +1835,7 @@ if(
 ){
 
 throw new Error(
-t('fillRequired')
+t('enterRequired')
 );
 
 }
@@ -1864,29 +1843,32 @@ t('fillRequired')
 const pets=getPets();
 
 const hours=bookingHours(pets);
-
 const deposit=depositTotal(pets);
 
 button.disabled=true;
-
-button.textContent=t('checking');
+button.textContent=t('processing');
 
 msg.className=
 'mt-4 text-center';
 
-msg.textContent=t('processing');
+msg.textContent=
+t('processingDetail');
 
 const payload={
 
 action:'createCheckout',
 
-owner:$('owner').value.trim(),
+owner:
+$('owner').value.trim(),
 
-phone:$('phone').value.trim(),
+phone:
+$('phone').value.trim(),
 
-date:$('bookingDate').value,
+date:
+$('bookingDate').value,
 
-time:$('bookingTime').value,
+time:
+$('bookingTime').value,
 
 pets:pets,
 
@@ -1901,21 +1883,25 @@ await fetch(
 API_URL,
 {
 method:'POST',
+
 headers:{
 'Content-Type':
 'text/plain;charset=utf-8'
 },
-body:JSON.stringify(payload)
-}
-);
 
-const data=await response.json();
+body:
+JSON.stringify(payload)
+
+});
+
+const data=
+await response.json();
 
 if(!data.ok){
 
 throw new Error(
 data.message ||
-'Checkout failed'
+'Checkout error'
 );
 
 }
@@ -1935,7 +1921,8 @@ msg.className=
 
 button.disabled=false;
 
-button.textContent=t('checkout');
+button.textContent=
+t('checkoutButton');
 
 }
 
@@ -1967,7 +1954,7 @@ $('bookingMsg').className=
 'mt-4 text-center text-[#556B5D]';
 
 $('bookingMsg').textContent=
-t('paymentChecking');
+t('paymentConfirm');
 
 try{
 
@@ -1994,12 +1981,11 @@ ${t('bookingSuccess')}
 </div>
 
 <div class="text-sm mt-1">
-${t('bookingId')}
-${data.bookingId || '-'}
+Booking ID: ${data.bookingId||'-'}
 </div>
 
 <div class="text-sm mt-2">
-${t('bookingSaved')}
+${t('systemSaved')}
 </div>
 
 `;
@@ -2024,7 +2010,6 @@ error.message;
 }
 
 }
-
 
 if(params.get('cancelled')==='1'){
 
@@ -2056,8 +2041,10 @@ $('pet1Service')
 .addEventListener(
 'change',
 function(){
+
 updateSummary();
 loadTimes();
+
 }
 );
 
@@ -2066,8 +2053,10 @@ $('pet2Service')
 .addEventListener(
 'change',
 function(){
+
 updateSummary();
 loadTimes();
+
 }
 );
 
@@ -2076,8 +2065,10 @@ $('pet2Type')
 .addEventListener(
 'change',
 function(){
+
 updateSummary();
 loadTimes();
+
 }
 );
 
@@ -2104,7 +2095,7 @@ updatePriceWeight
 
 
 /*************************************************
- * INITIALIZE
+ * DATE MINIMUM
  *************************************************/
 
 function setDateMinimum(){
@@ -2114,28 +2105,40 @@ const now=new Date();
 const year=now.getFullYear();
 
 const month=
-String(now.getMonth()+1)
-.padStart(2,'0');
+String(
+now.getMonth()+1
+).padStart(2,'0');
 
 const day=
-String(now.getDate())
-.padStart(2,'0');
+String(
+now.getDate()
+).padStart(2,'0');
 
 $('bookingDate').min=
-`${year}-${month}-${day}`;
+year+'-'+month+'-'+day;
 
 }
 
 
-loadPriceSizes();
+/*************************************************
+ * INITIALIZE
+ *************************************************/
 
-updateSummary();
+function initialize(){
+
+setLang(
+localStorage.getItem('lunessa_lang') || 'th'
+);
 
 setDateMinimum();
 
-applyLanguage();
+updateSummary();
 
 handleStripeReturn();
+
+}
+
+initialize();
 
 </script>
 
