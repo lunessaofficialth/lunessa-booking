@@ -3,26 +3,36 @@
 }
 
 :root {
-  --ivory: #f8f5f0;
+  --cream: #faf7f2;
   --white: #ffffff;
-  --rose: #d8aaa0;
-  --rose-dark: #9d7068;
-  --sage: #aab8a4;
-  --text: #343331;
+  --deep: #556b5d;
+  --sage: #7d9077;
+  --rose: #9a7b66;
+  --rose-soft: #d8aaa0;
+  --text: #4f4f4f;
   --muted: #77736e;
-  --line: #e5dfd8;
-  --soft: #f1ece7;
+  --line: #ddd6c7;
+  --soft: #f1ece4;
+  --green-soft: #eef3ec;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  background: var(--ivory);
+  background: var(--cream);
   color: var(--text);
   font-family:
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
+    "Noto Sans Thai",
+    "Noto Sans",
+    Arial,
     sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
@@ -35,46 +45,93 @@ button {
   cursor: pointer;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+/* APP */
+
 .booking-app {
   width: min(680px, 100%);
   margin: auto;
-  padding: 28px 18px 50px;
+  padding: 20px 18px 55px;
 }
 
 
-/* BRAND */
+/* BRAND HEADER */
 
 .brand-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+  padding-top: 12px;
+}
+
+.brand-logo-wrap {
+  width: 100%;
+  max-width: 220px;
+  background: rgba(255,255,255,.88);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 10px;
+  box-shadow: 0 4px 18px rgba(80,70,60,.04);
+}
+
+.brand-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 125px;
+  object-fit: contain;
+  border-radius: 16px;
+}
+
+.home-button {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255,255,255,.8);
+  color: var(--deep);
+  font-size: 12px;
+  font-weight: 600;
+  transition: .2s ease;
+}
+
+.home-button:hover {
+  background: white;
+  transform: translateY(-1px);
+}
+
+.language-switcher {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 30px;
+  gap: 8px;
+  margin-top: 11px;
+  color: #a19a92;
+  font-size: 11px;
 }
 
-.brand-mark {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--rose);
-  color: white;
-  font-family: Georgia, serif;
-  font-size: 24px;
+.lang-button {
+  border: 0;
+  padding: 3px 2px;
+  background: transparent;
+  color: #918a83;
+  font-size: 11px;
 }
 
-.brand-header h1 {
-  margin: 0;
-  font-family: Georgia, serif;
-  font-size: 25px;
-  font-weight: 500;
-}
-
-.brand-header p {
-  margin: 2px 0 0;
-  color: var(--muted);
-  font-size: 12px;
-  letter-spacing: 1px;
+.lang-button.active {
+  color: var(--deep);
+  font-weight: 700;
 }
 
 
@@ -92,7 +149,7 @@ button {
   align-items: center;
   gap: 5px;
   color: #aaa39c;
-  min-width: 42px;
+  min-width: 45px;
 }
 
 .progress-step span {
@@ -108,15 +165,16 @@ button {
 
 .progress-step small {
   font-size: 9px;
+  white-space: nowrap;
 }
 
 .progress-step.active {
-  color: var(--rose-dark);
+  color: var(--deep);
 }
 
 .progress-step.active span {
-  background: var(--rose);
-  border-color: var(--rose);
+  background: var(--sage);
+  border-color: var(--sage);
   color: white;
 }
 
@@ -143,7 +201,7 @@ button {
 
 .eyebrow {
   display: block;
-  color: var(--rose-dark);
+  color: var(--rose);
   font-size: 10px;
   letter-spacing: 2px;
   font-weight: 700;
@@ -152,27 +210,30 @@ button {
 
 .section-heading h2 {
   margin: 0 0 8px;
-  font-family: Georgia, serif;
-  font-weight: 500;
+  color: var(--deep);
   font-size: 30px;
+  line-height: 1.25;
+  font-weight: 400;
+  letter-spacing: -.3px;
 }
 
 .section-heading p {
   margin: 0;
   color: var(--muted);
   font-size: 14px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 
 /* PET CARD */
 
 .pet-card {
-  background: var(--white);
+  background: rgba(255,255,255,.94);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 20px;
   padding: 20px;
   margin-bottom: 14px;
+  box-shadow: 0 3px 15px rgba(80,70,60,.025);
 }
 
 .pet-card-header {
@@ -184,12 +245,13 @@ button {
 
 .pet-card-header h3 {
   margin: 3px 0 0;
-  font-family: Georgia, serif;
+  color: var(--deep);
+  font-size: 18px;
   font-weight: 500;
 }
 
 .pet-number {
-  color: var(--rose-dark);
+  color: var(--rose);
   font-size: 9px;
   letter-spacing: 1.5px;
   font-weight: 700;
@@ -198,7 +260,7 @@ button {
 .remove-pet {
   border: 0;
   background: none;
-  color: #a27670;
+  color: var(--rose);
   font-size: 12px;
 }
 
@@ -219,15 +281,68 @@ select {
   margin-top: 7px;
   padding: 14px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 12px;
   background: #fff;
   color: var(--text);
   outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
 }
 
 input:focus,
 select:focus {
-  border-color: var(--rose);
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(125,144,119,.09);
+}
+
+input::placeholder {
+  color: #aaa49d;
+}
+
+textarea {
+  width: 100%;
+  margin-top: 7px;
+  padding: 14px;
+  min-height: 82px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--text);
+  outline: none;
+  font: inherit;
+  line-height: 1.6;
+}
+
+textarea:focus {
+  border-color: var(--sage);
+  box-shadow: 0 0 0 3px rgba(125,144,119,.09);
+}
+
+.caution-note {
+  margin-top: -5px;
+  margin-bottom: 17px;
+  padding: 13px 14px;
+  border-radius: 12px;
+  background: #fbf8f4;
+  border: 1px solid #eee5dc;
+}
+
+.caution-note p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.caution-note strong {
+  color: var(--rose);
+}
+
+.field-help {
+  margin: 6px 0 0;
+  color: #99928b;
+  font-size: 10px;
+  line-height: 1.6;
 }
 
 
@@ -238,14 +353,20 @@ select:focus {
 .ghost-button {
   width: 100%;
   min-height: 50px;
-  border-radius: 11px;
+  border-radius: 13px;
   font-weight: 600;
+  transition: .2s ease;
 }
 
 .primary-button {
-  border: 1px solid var(--rose);
-  background: var(--rose);
+  border: 1px solid var(--sage);
+  background: var(--sage);
   color: white;
+}
+
+.primary-button:hover:not(:disabled) {
+  opacity: .92;
+  transform: translateY(-1px);
 }
 
 .primary-button:disabled {
@@ -255,15 +376,23 @@ select:focus {
 
 .secondary-button {
   margin-bottom: 18px;
-  border: 1px dashed var(--rose);
+  border: 1px dashed var(--rose-soft);
   background: transparent;
-  color: var(--rose-dark);
+  color: var(--rose);
+}
+
+.secondary-button:hover {
+  background: rgba(216,170,160,.08);
 }
 
 .ghost-button {
   border: 1px solid var(--line);
   background: white;
   color: var(--text);
+}
+
+.ghost-button:hover {
+  border-color: var(--rose-soft);
 }
 
 .button-row {
@@ -281,7 +410,7 @@ select:focus {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   background: var(--soft);
-  border-radius: 15px;
+  border-radius: 16px;
   padding: 17px;
   margin: 20px 0;
 }
@@ -298,6 +427,7 @@ select:focus {
 
 .summary-card strong {
   margin-top: 5px;
+  color: var(--deep);
   font-size: 17px;
 }
 
@@ -307,14 +437,15 @@ select:focus {
 .booking-summary {
   background: white;
   border: 1px solid var(--line);
-  border-radius: 15px;
+  border-radius: 16px;
   padding: 18px;
   margin-top: 25px;
 }
 
 .booking-summary h3 {
   margin: 0 0 15px;
-  font-family: Georgia, serif;
+  color: var(--deep);
+  font-size: 17px;
   font-weight: 500;
 }
 
@@ -330,6 +461,7 @@ select:focus {
 }
 
 .summary-row span,
+.summary-total span,
 .final-row span {
   color: var(--muted);
 }
@@ -364,14 +496,19 @@ select:focus {
 .time-button {
   min-height: 52px;
   border: 1px solid var(--line);
-  border-radius: 11px;
+  border-radius: 12px;
   background: white;
   color: var(--text);
+  transition: .2s ease;
+}
+
+.time-button:hover {
+  border-color: var(--sage);
 }
 
 .time-button.selected {
-  background: var(--rose);
-  border-color: var(--rose);
+  background: var(--sage);
+  border-color: var(--sage);
   color: white;
 }
 
@@ -388,7 +525,7 @@ select:focus {
 .final-summary {
   background: white;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 17px;
   padding: 18px;
 }
 
@@ -400,6 +537,7 @@ select:focus {
 .final-pets > div {
   display: flex;
   justify-content: space-between;
+  gap: 15px;
   padding: 11px 0;
   border-bottom: 1px solid var(--line);
   font-size: 13px;
@@ -407,6 +545,7 @@ select:focus {
 
 .final-pets span {
   color: var(--muted);
+  text-align: right;
 }
 
 .final-deposit {
@@ -414,24 +553,68 @@ select:focus {
   justify-content: space-between;
   margin-top: 18px;
   padding-top: 15px;
-  border-top: 2px solid var(--text);
+  border-top: 2px solid var(--deep);
 }
 
 .final-deposit strong {
+  color: var(--deep);
   font-size: 20px;
+}
+
+
+/* POLICY */
+
+.booking-policy {
+  margin-top: 18px;
+  padding: 17px;
+  border-radius: 15px;
+  background: #fbf7f2;
+  border: 1px solid #eadfd4;
+}
+
+.policy-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--deep);
+  font-size: 13px;
+}
+
+.policy-star {
+  color: var(--rose);
+  font-size: 16px;
+}
+
+.booking-policy p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.75;
+}
+
+.line-contact {
+  display: inline-flex;
+  margin-top: 12px;
+  padding: 7px 11px;
+  border-radius: 9px;
+  background: var(--green-soft);
+  color: var(--deep);
+  font-size: 11px;
+  font-weight: 700;
 }
 
 
 /* NOTICE */
 
 .deposit-notice {
-  margin-top: 18px;
+  margin-top: 12px;
   padding: 16px;
   border-radius: 13px;
-  background: #eef2eb;
+  background: var(--green-soft);
 }
 
 .deposit-notice strong {
+  color: var(--deep);
   font-size: 13px;
 }
 
@@ -439,6 +622,7 @@ select:focus {
   margin: 5px 0 0;
   color: var(--muted);
   font-size: 12px;
+  line-height: 1.6;
 }
 
 
@@ -485,8 +669,8 @@ select:focus {
 }
 
 .result-screen h2 {
-  font-family: Georgia, serif;
-  font-weight: 500;
+  color: var(--deep);
+  font-weight: 400;
   font-size: 28px;
 }
 
@@ -529,13 +713,26 @@ footer {
   letter-spacing: 1px;
 }
 
+footer p {
+  margin: 5px 0;
+}
+
 
 /* MOBILE */
 
 @media (max-width: 480px) {
 
   .booking-app {
-    padding: 22px 14px 40px;
+    padding: 18px 14px 40px;
+  }
+
+  .brand-logo-wrap {
+    max-width: 190px;
+  }
+
+  .home-button {
+    font-size: 10px;
+    padding: 6px 9px;
   }
 
   .section-heading h2 {
@@ -548,6 +745,15 @@ footer {
 
   .button-row {
     grid-template-columns: 1fr;
+  }
+
+  .final-pets > div {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .final-pets span {
+    text-align: left;
   }
 
 }
