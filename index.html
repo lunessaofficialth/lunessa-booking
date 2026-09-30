@@ -24,19 +24,57 @@
 
   <main class="booking-app">
 
+    <!-- BRAND HEADER -->
+
     <header class="brand-header">
 
-      <div class="brand-mark">
-        L
+      <a
+        href="index.html"
+        class="home-button"
+        data-i18n="backHome"
+      >
+        ← กลับหน้าหลัก
+      </a>
+
+      <div class="brand-logo-wrap">
+
+        <img
+          src="lunessa-logo.png"
+          alt="Lunessa Pet Boutique"
+          class="brand-logo"
+        >
+
       </div>
 
-      <div>
+      <div class="language-switcher">
 
-        <h1>Lunessa</h1>
+        <button
+          type="button"
+          class="lang-button active"
+          data-lang="th"
+        >
+          ไทย
+        </button>
 
-        <p>
-          Pet Boutique
-        </p>
+        <span>·</span>
+
+        <button
+          type="button"
+          class="lang-button"
+          data-lang="en"
+        >
+          EN
+        </button>
+
+        <span>·</span>
+
+        <button
+          type="button"
+          class="lang-button"
+          data-lang="zh"
+        >
+          中文
+        </button>
 
       </div>
 
@@ -52,7 +90,7 @@
         data-step="1"
       >
         <span>1</span>
-        <small>Pets</small>
+        <small data-i18n="progressPets">น้อง</small>
       </div>
 
       <div class="progress-line"></div>
@@ -62,7 +100,7 @@
         data-step="2"
       >
         <span>2</span>
-        <small>Details</small>
+        <small data-i18n="progressDetails">ข้อมูล</small>
       </div>
 
       <div class="progress-line"></div>
@@ -72,7 +110,7 @@
         data-step="3"
       >
         <span>3</span>
-        <small>Date</small>
+        <small data-i18n="progressDate">วันเวลา</small>
       </div>
 
       <div class="progress-line"></div>
@@ -82,7 +120,7 @@
         data-step="4"
       >
         <span>4</span>
-        <small>Payment</small>
+        <small data-i18n="progressPayment">ยืนยัน</small>
       </div>
 
     </div>
@@ -97,16 +135,19 @@
 
       <div class="section-heading">
 
-        <span class="eyebrow">
+        <span
+          class="eyebrow"
+          data-i18n="step01"
+        >
           STEP 01
         </span>
 
-        <h2>
-          Tell us about your pet
+        <h2 data-i18n="petHeading">
+          เล่าให้เรารู้จักน้อง
         </h2>
 
-        <p>
-          You can book up to 2 pets per appointment.
+        <p data-i18n="petDescription">
+          สามารถจองได้สูงสุด 2 น้องต่อหนึ่งการจอง
         </p>
 
       </div>
@@ -120,24 +161,34 @@
         class="secondary-button"
         type="button"
       >
-        + Add another pet
+        + <span data-i18n="addPet">เพิ่มน้องอีกตัว</span>
       </button>
 
 
       <div class="summary-card">
 
         <div>
-          <span>Estimated time</span>
+
+          <span data-i18n="estimatedTime">
+            ระยะเวลาโดยประมาณ
+          </span>
+
           <strong id="summary-hours">
-            0 hours
+            0 ชั่วโมง
           </strong>
+
         </div>
 
         <div>
-          <span>Deposit</span>
+
+          <span data-i18n="deposit">
+            มัดจำ
+          </span>
+
           <strong id="summary-deposit">
             ฿0
           </strong>
+
         </div>
 
       </div>
@@ -148,7 +199,9 @@
         class="primary-button"
         type="button"
       >
-        Continue
+        <span data-i18n="continue">
+          ดำเนินการต่อ
+        </span>
       </button>
 
     </section>
@@ -163,36 +216,46 @@
 
       <div class="section-heading">
 
-        <span class="eyebrow">
+        <span
+          class="eyebrow"
+          data-i18n="step02"
+        >
           STEP 02
         </span>
 
-        <h2>
-          Your details
+        <h2 data-i18n="detailsHeading">
+          ข้อมูลสำหรับการจอง
         </h2>
 
-        <p>
-          We need these details to confirm your appointment.
+        <p data-i18n="detailsDescription">
+          ข้อมูลนี้ใช้สำหรับยืนยันและติดต่อเกี่ยวกับนัดหมายของคุณ
         </p>
 
       </div>
 
 
       <label>
-        Owner name
+
+        <span data-i18n="ownerName">
+          ชื่อเจ้าของ
+        </span>
 
         <input
           id="owner"
           type="text"
           autocomplete="name"
-          placeholder="Your name"
+          placeholder="ชื่อของคุณ"
+          data-placeholder="ownerPlaceholder"
         >
 
       </label>
 
 
       <label>
-        Phone number
+
+        <span data-i18n="phoneNumber">
+          เบอร์โทรศัพท์
+        </span>
 
         <input
           id="phone"
@@ -206,8 +269,8 @@
 
       <div class="booking-summary">
 
-        <h3>
-          Appointment summary
+        <h3 data-i18n="appointmentSummary">
+          สรุปการจอง
         </h3>
 
         <div id="details-summary"></div>
@@ -222,7 +285,9 @@
           type="button"
           data-back="1"
         >
-          Back
+          <span data-i18n="back">
+            ย้อนกลับ
+          </span>
         </button>
 
         <button
@@ -230,7 +295,9 @@
           class="primary-button"
           type="button"
         >
-          Choose date
+          <span data-i18n="chooseDate">
+            เลือกวันและเวลา
+          </span>
         </button>
 
       </div>
@@ -247,23 +314,29 @@
 
       <div class="section-heading">
 
-        <span class="eyebrow">
+        <span
+          class="eyebrow"
+          data-i18n="step03"
+        >
           STEP 03
         </span>
 
-        <h2>
-          Choose your appointment
+        <h2 data-i18n="dateHeading">
+          เลือกวันและเวลานัดหมาย
         </h2>
 
-        <p>
-          Only available start times are shown.
+        <p data-i18n="dateDescription">
+          ระบบจะแสดงเฉพาะช่วงเวลาที่สามารถจองได้
         </p>
 
       </div>
 
 
       <label>
-        Date
+
+        <span data-i18n="date">
+          วันที่
+        </span>
 
         <input
           id="booking-date"
@@ -275,11 +348,11 @@
 
       <div class="time-heading">
 
-        <span>Available times</span>
-
-        <span id="loading-times">
-          Checking...
+        <span data-i18n="availableTimes">
+          เวลาที่ว่าง
         </span>
+
+        <span id="loading-times"></span>
 
       </div>
 
@@ -303,7 +376,9 @@
           type="button"
           data-back="2"
         >
-          Back
+          <span data-i18n="back">
+            ย้อนกลับ
+          </span>
         </button>
 
         <button
@@ -312,7 +387,9 @@
           type="button"
           disabled
         >
-          Continue to payment
+          <span data-i18n="continueConfirm">
+            ตรวจสอบการจอง
+          </span>
         </button>
 
       </div>
@@ -329,16 +406,19 @@
 
       <div class="section-heading">
 
-        <span class="eyebrow">
+        <span
+          class="eyebrow"
+          data-i18n="step04"
+        >
           STEP 04
         </span>
 
-        <h2>
-          Confirm your booking
+        <h2 data-i18n="confirmHeading">
+          ตรวจสอบและยืนยันการจอง
         </h2>
 
-        <p>
-          Review your appointment before paying the deposit.
+        <p data-i18n="confirmDescription">
+          กรุณาตรวจสอบรายละเอียดก่อนชำระมัดจำ
         </p>
 
       </div>
@@ -350,14 +430,48 @@
       ></div>
 
 
+      <div class="booking-policy">
+
+        <div class="policy-title">
+          <span class="policy-star">*</span>
+
+          <strong data-i18n="lateTitle">
+            เรื่องเวลาเข้ารับบริการ
+          </strong>
+        </div>
+
+        <p data-i18n="latePolicy">
+          ทางร้านขอสงวนเวลาให้กับน้องทุกคิวอย่างเต็มที่
+          หากมาสาย สามารถเลทได้ไม่เกิน 15 นาที
+          หากเกินเวลาที่กำหนด มัดจำจะถูกหักโดยอัตโนมัติ
+        </p>
+
+        <p data-i18n="emergencyPolicy">
+          หากเกิดเหตุฉุกเฉินหรือมีเหตุจำเป็นระหว่างเดินทาง
+          กรุณาติดต่อช่างทาง LINE โดยเร็วที่สุด
+          เพื่อให้ทางร้านช่วยดูแลคิวให้เหมาะสม
+        </p>
+
+        <a
+          href="https://line.me/R/ti/p/@300kvtvw"
+          target="_blank"
+          rel="noopener"
+          class="line-contact"
+        >
+          LINE @lunessa
+        </a>
+
+      </div>
+
+
       <div class="deposit-notice">
 
-        <strong>
-          Deposit required
+        <strong data-i18n="depositRequired">
+          มัดจำเพื่อยืนยันคิว
         </strong>
 
-        <p>
-          Your appointment will be reserved after successful payment.
+        <p data-i18n="depositDescription">
+          คิวของคุณจะได้รับการยืนยันหลังจากชำระมัดจำสำเร็จ
         </p>
 
       </div>
@@ -376,7 +490,9 @@
           type="button"
           data-back="3"
         >
-          Back
+          <span data-i18n="back">
+            ย้อนกลับ
+          </span>
         </button>
 
         <button
@@ -384,7 +500,9 @@
           class="primary-button"
           type="button"
         >
-          Pay deposit
+          <span data-i18n="payDeposit">
+            ชำระมัดจำ
+          </span>
         </button>
 
       </div>
@@ -403,16 +521,19 @@
         ✓
       </div>
 
-      <span class="eyebrow">
+      <span
+        class="eyebrow"
+        data-i18n="bookingConfirmed"
+      >
         BOOKING CONFIRMED
       </span>
 
-      <h2>
-        Your appointment is confirmed
+      <h2 data-i18n="successHeading">
+        จองคิวเรียบร้อยแล้ว
       </h2>
 
-      <p>
-        Thank you for booking with Lunessa Pet Boutique.
+      <p data-i18n="successDescription">
+        ขอบคุณที่ไว้วางใจ Lunessa Pet Boutique
       </p>
 
       <div
@@ -434,16 +555,19 @@
         ×
       </div>
 
-      <span class="eyebrow">
+      <span
+        class="eyebrow"
+        data-i18n="paymentCancelled"
+      >
         PAYMENT CANCELLED
       </span>
 
-      <h2>
-        Your payment was cancelled
+      <h2 data-i18n="cancelHeading">
+        การชำระเงินถูกยกเลิก
       </h2>
 
-      <p>
-        Your appointment has not been confirmed.
+      <p data-i18n="cancelDescription">
+        คิวของคุณยังไม่ได้รับการยืนยัน
       </p>
 
       <button
@@ -451,7 +575,9 @@
         class="primary-button"
         type="button"
       >
-        Return to booking
+        <span data-i18n="returnBooking">
+          กลับไปหน้าจอง
+        </span>
       </button>
 
     </section>
@@ -460,11 +586,11 @@
     <footer>
 
       <p>
-        Lunessa Pet Boutique
+        LUNESSA PET BOUTIQUE
       </p>
 
-      <p>
-        Grooming • Care • Love
+      <p data-i18n="footerTagline">
+        GROOMING • CARE • LOVE
       </p>
 
     </footer>
