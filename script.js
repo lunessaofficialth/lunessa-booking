@@ -19,7 +19,7 @@
 ===================================================== */
 
 const API_URL =
-  'PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+  'https://script.google.com/macros/s/AKfycbxDEYq9veZKBkjdiQT_mX3YPuFAbWx0lgXCN6RTCBfwWJuBUztLJxfBfkJtbzYP6H7Oig/exec';
 
 
 /* =====================================================
