@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
+
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -8,64 +10,40 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Lunessa Pet Boutique — Book an Appointment</title>
+  <title>Lunessa Pet Boutique</title>
 
   <link
     rel="stylesheet"
     href="style.css"
   >
+
 </head>
+
 
 <body>
 
-  <!-- ==================================================
-       HEADER
-  =================================================== -->
+  <main class="booking-app">
 
-  <header class="site-header">
+    <header class="brand-header">
 
-    <div class="brand">
-      <div class="brand-name">
-        LUNESSA
+      <div class="brand-mark">
+        L
       </div>
 
-      <div class="brand-subtitle">
-        PET BOUTIQUE
+      <div>
+
+        <h1>Lunessa</h1>
+
+        <p>
+          Pet Boutique
+        </p>
+
       </div>
-    </div>
 
-  </header>
-
-
-  <!-- ==================================================
-       MAIN
-  =================================================== -->
-
-  <main class="booking-container">
-
-    <section class="booking-intro">
-
-      <p class="eyebrow">
-        PET GROOMING APPOINTMENT
-      </p>
-
-      <h1>
-        Book your pet's<br>
-        appointment
-      </h1>
-
-      <p class="intro-text">
-        Select your pet and services first.
-        We'll calculate the required time and
-        show only available appointment times.
-      </p>
-
-    </section>
+    </header>
 
 
-    <!-- ==================================================
-         PROGRESS
-    =================================================== -->
+    <!-- PROGRESS -->
 
     <div class="progress">
 
@@ -84,7 +62,7 @@
         data-step="2"
       >
         <span>2</span>
-        <small>Date & Time</small>
+        <small>Details</small>
       </div>
 
       <div class="progress-line"></div>
@@ -94,7 +72,7 @@
         data-step="3"
       >
         <span>3</span>
-        <small>Details</small>
+        <small>Date</small>
       </div>
 
       <div class="progress-line"></div>
@@ -110,783 +88,324 @@
     </div>
 
 
-    <!-- ==================================================
-         BOOKING FORM
-    =================================================== -->
-
-    <form
-      id="bookingForm"
-      novalidate
-    >
-
-      <!-- ==================================================
-           STEP 1 — PETS
-      =================================================== -->
-
-      <section
-        id="step1"
-        class="booking-step active"
-      >
-
-        <div class="step-heading">
-
-          <p class="step-number">
-            STEP 01
-          </p>
-
-          <h2>
-            Tell us about your pets
-          </h2>
-
-          <p>
-            You can book up to 2 pets in one appointment.
-          </p>
-
-        </div>
-
-
-        <!-- PET 1 -->
-
-        <div
-          class="pet-card"
-          data-pet-card="1"
-        >
-
-          <div class="pet-card-header">
-
-            <div>
-              <span class="pet-number">
-                PET 01
-              </span>
-
-              <h3>
-                First pet
-              </h3>
-            </div>
-
-          </div>
-
-
-          <div class="field-grid">
-
-            <div class="field">
-
-              <label for="pet1Name">
-                Pet name
-              </label>
-
-              <input
-                id="pet1Name"
-                type="text"
-                autocomplete="off"
-                placeholder="e.g. Mochi"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="pet1Type">
-                Pet type
-              </label>
-
-              <select id="pet1Type">
-
-                <option value="">
-                  Select
-                </option>
-
-                <option value="dog">
-                  Dog
-                </option>
-
-                <option value="cat">
-                  Cat
-                </option>
-
-                <option value="rabbit">
-                  Rabbit
-                </option>
-
-              </select>
-
-            </div>
-
-          </div>
-
-
-          <div class="field">
-
-            <label>
-              Service
-            </label>
-
-            <div class="service-options">
-
-              <label class="service-option">
-
-                <input
-                  type="radio"
-                  name="pet1Service"
-                  value="bath"
-                >
-
-                <span>
-                  <strong>Bath</strong>
-                  <small>1 hour</small>
-                </span>
-
-              </label>
-
-
-              <label class="service-option">
-
-                <input
-                  type="radio"
-                  name="pet1Service"
-                  value="clip"
-                >
-
-                <span>
-                  <strong>Bath + Clipping</strong>
-                  <small>2 hours</small>
-                </span>
-
-              </label>
-
-
-              <label class="service-option">
-
-                <input
-                  type="radio"
-                  name="pet1Service"
-                  value="scissor"
-                >
-
-                <span>
-                  <strong>Bath + Scissor</strong>
-                  <small>2 hours</small>
-                </span>
-
-              </label>
-
-
-              <label class="service-option">
-
-                <input
-                  type="radio"
-                  name="pet1Service"
-                  value="haircut_only"
-                >
-
-                <span>
-                  <strong>Haircut only</strong>
-                  <small>2 hours</small>
-                </span>
-
-              </label>
-
-
-              <label class="service-option">
-
-                <input
-                  type="radio"
-                  name="pet1Service"
-                  value="addon"
-                >
-
-                <span>
-                  <strong>Additional service only</strong>
-                  <small>1 hour</small>
-                </span>
-
-              </label>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- PET 2 -->
-
-        <div
-          id="pet2Card"
-          class="pet-card hidden"
-          data-pet-card="2"
-        >
-
-          <div class="pet-card-header">
-
-            <div>
-              <span class="pet-number">
-                PET 02
-              </span>
-
-              <h3>
-                Second pet
-              </h3>
-            </div>
-
-
-            <button
-              type="button"
-              id="removePet2"
-              class="text-button"
-            >
-              Remove
-            </button>
-
-          </div>
-
-
-          <div class="field-grid">
-
-            <div class="field">
-
-              <label for="pet2Name">
-                Pet name
-              </label>
-
-              <input
-                id="pet2Name"
-                type="text"
-                autocomplete="off"
-                placeholder="e.g. Luna"
-              >
-
-            </div>
-
-
-            <div class="field">
-
-              <label for="pet2Type">
-                Pet type
-              </label>
-
-              <select id="pet2Type">
-
-                <option value="">
-                  Select
-                </option>
-
-                <option value="dog">
-                  Dog
-                </option>
-
-                <option value="cat">
-                  Cat
-                </option>
-
-                <option value="rabbit">
-                  Rabbit
-                </option>
-
-              </select>
-
-            </div>
-
-          </div>
-
-
-          <div class="field">
-
-            <label>
-              Service
-            </label>
-
-            <div class="service-options">
-
-              <label class="service-option">
-
-                <input
-                  type="radio"
-                  name="pet2Service"
-                  value="bath"
-                >
-
-                <span>
-                  <strong>Bath</strong>
-                  <small>1 hour</small>
-                </span>
-
-              </label>
-
-
-              <label class="service-option">
-
-                <input
-                  type="radio"
-                  name="pet2Service"
-                  value="clip"
-                >
-
-                <span>
-                  <strong>Bath + Clipping</strong>
-                  <small>2 hours</small>
-                </span>
-
-              </label>
-
-
-              <label class="service-option">
-
-                <input
-                  type="radio"
-                  name="pet2Service"
-                  value="scissor"
-                >
-
-                <span>
-                  <strong>Bath + Scissor</strong>
-                  <small>2 hours</small>
-                </span>
-
-              </label>
-
-
-              <label class="service-option">
-
-                <input
-                  type="radio"
-                  name="pet2Service"
-                  value="haircut_only"
-                >
-
-                <span>
-                  <strong>Haircut only</strong>
-                  <small>2 hours</small>
-                </span>
-
-              </label>
-
-
-              <label class="service-option">
-
-                <input
-                  type="radio"
-                  name="pet2Service"
-                  value="addon"
-                >
-
-                <span>
-                  <strong>Additional service only</strong>
-                  <small>1 hour</small>
-                </span>
-
-              </label>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <button
-          type="button"
-          id="addPetButton"
-          class="secondary-button"
-        >
-          + Add another pet
-        </button>
-
-
-        <!-- CALCULATED SUMMARY -->
-
-        <div
-          id="bookingSummary"
-          class="booking-summary hidden"
-        >
-
-          <div class="summary-row">
-
-            <span>
-              Appointment duration
-            </span>
-
-            <strong id="summaryHours">
-              —
-            </strong>
-
-          </div>
-
-
-          <div class="summary-row">
-
-            <span>
-              Deposit
-            </span>
-
-            <strong id="summaryDeposit">
-              —
-            </strong>
-
-          </div>
-
-        </div>
-
-
-        <div
-          id="step1Error"
-          class="error-message"
-        ></div>
-
-
-        <div class="step-actions">
-
-          <button
-            type="button"
-            id="continueToDate"
-            class="primary-button"
-          >
-            Continue
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- ==================================================
-           STEP 2 — DATE / TIME
-      =================================================== -->
-
-      <section
-        id="step2"
-        class="booking-step"
-      >
-
-        <div class="step-heading">
-
-          <p class="step-number">
-            STEP 02
-          </p>
-
-          <h2>
-            Choose your appointment
-          </h2>
-
-          <p>
-            Available times are calculated from your selected services.
-          </p>
-
-        </div>
-
-
-        <div class="field">
-
-          <label for="bookingDate">
-            Date
-          </label>
-
-          <input
-            id="bookingDate"
-            type="date"
-          >
-
-        </div>
-
-
-        <div class="availability-box">
-
-          <div class="availability-header">
-
-            <div>
-
-              <span>
-                AVAILABLE TIMES
-              </span>
-
-              <strong id="durationLabel">
-                —
-              </strong>
-
-            </div>
-
-            <div
-              id="loadingSlots"
-              class="loading hidden"
-            >
-              Checking...
-            </div>
-
-          </div>
-
-
-          <div
-            id="slotGrid"
-            class="slot-grid"
-          ></div>
-
-
-          <div
-            id="noSlotsMessage"
-            class="empty-message hidden"
-          >
-            No available appointment times for this date.
-            Please choose another date.
-          </div>
-
-        </div>
-
-
-        <div
-          id="step2Error"
-          class="error-message"
-        ></div>
-
-
-        <div class="step-actions split">
-
-          <button
-            type="button"
-            id="backToPets"
-            class="secondary-button"
-          >
-            Back
-          </button>
-
-          <button
-            type="button"
-            id="continueToDetails"
-            class="primary-button"
-          >
-            Continue
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- ==================================================
-           STEP 3 — CUSTOMER
-      =================================================== -->
-
-      <section
-        id="step3"
-        class="booking-step"
-      >
-
-        <div class="step-heading">
-
-          <p class="step-number">
-            STEP 03
-          </p>
-
-          <h2>
-            Your details
-          </h2>
-
-          <p>
-            Please enter your contact information.
-          </p>
-
-        </div>
-
-
-        <div class="field">
-
-          <label for="ownerName">
-            Your name
-          </label>
-
-          <input
-            id="ownerName"
-            type="text"
-            autocomplete="name"
-            placeholder="Your name"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label for="ownerPhone">
-            Phone number
-          </label>
-
-          <input
-            id="ownerPhone"
-            type="tel"
-            autocomplete="tel"
-            placeholder="08XXXXXXXX"
-          >
-
-        </div>
-
-
-        <!-- FINAL REVIEW -->
-
-        <div class="review-card">
-
-          <div class="review-heading">
-            Appointment summary
-          </div>
-
-
-          <div
-            id="finalPetSummary"
-            class="review-section"
-          ></div>
-
-
-          <div class="review-row">
-
-            <span>
-              Date
-            </span>
-
-            <strong id="finalDate">
-              —
-            </strong>
-
-          </div>
-
-
-          <div class="review-row">
-
-            <span>
-              Time
-            </span>
-
-            <strong id="finalTime">
-              —
-            </strong>
-
-          </div>
-
-
-          <div class="review-row">
-
-            <span>
-              Duration
-            </span>
-
-            <strong id="finalHours">
-              —
-            </strong>
-
-          </div>
-
-
-          <div class="review-total">
-
-            <span>
-              Deposit
-            </span>
-
-            <strong id="finalDeposit">
-              —
-            </strong>
-
-          </div>
-
-        </div>
-
-
-        <div
-          id="step3Error"
-          class="error-message"
-        ></div>
-
-
-        <div class="step-actions split">
-
-          <button
-            type="button"
-            id="backToDate"
-            class="secondary-button"
-          >
-            Back
-          </button>
-
-          <button
-            type="submit"
-            id="payDeposit"
-            class="primary-button"
-          >
-            Continue to payment
-          </button>
-
-        </div>
-
-      </section>
-
-
-      <!-- ==================================================
-           STEP 4 — PAYMENT
-      =================================================== -->
-
-      <section
-        id="step4"
-        class="booking-step"
-      >
-
-        <div class="payment-state">
-
-          <div class="payment-icon">
-            ✓
-          </div>
-
-          <p class="step-number">
-            PAYMENT
-          </p>
-
-          <h2>
-            Complete your deposit
-          </h2>
-
-          <p>
-            You will be redirected to Stripe
-            to securely pay your booking deposit.
-          </p>
-
-          <div class="payment-amount">
-            <span>
-              Deposit
-            </span>
-
-            <strong id="paymentDeposit">
-              —
-            </strong>
-          </div>
-
-          <div
-            id="paymentLoading"
-            class="loading"
-          >
-            Preparing secure payment...
-          </div>
-
-        </div>
-
-      </section>
-
-
-    </form>
-
-
-    <!-- ==================================================
-         SUCCESS
-    =================================================== -->
+    <!-- STEP 1 -->
 
     <section
-      id="successState"
-      class="success-state hidden"
+      id="step1"
+      class="step active"
+    >
+
+      <div class="section-heading">
+
+        <span class="eyebrow">
+          STEP 01
+        </span>
+
+        <h2>
+          Tell us about your pet
+        </h2>
+
+        <p>
+          You can book up to 2 pets per appointment.
+        </p>
+
+      </div>
+
+
+      <div id="pets-container"></div>
+
+
+      <button
+        id="add-pet"
+        class="secondary-button"
+        type="button"
+      >
+        + Add another pet
+      </button>
+
+
+      <div class="summary-card">
+
+        <div>
+          <span>Estimated time</span>
+          <strong id="summary-hours">
+            0 hours
+          </strong>
+        </div>
+
+        <div>
+          <span>Deposit</span>
+          <strong id="summary-deposit">
+            ฿0
+          </strong>
+        </div>
+
+      </div>
+
+
+      <button
+        id="next-details"
+        class="primary-button"
+        type="button"
+      >
+        Continue
+      </button>
+
+    </section>
+
+
+    <!-- STEP 2 -->
+
+    <section
+      id="step2"
+      class="step"
+    >
+
+      <div class="section-heading">
+
+        <span class="eyebrow">
+          STEP 02
+        </span>
+
+        <h2>
+          Your details
+        </h2>
+
+        <p>
+          We need these details to confirm your appointment.
+        </p>
+
+      </div>
+
+
+      <label>
+        Owner name
+
+        <input
+          id="owner"
+          type="text"
+          autocomplete="name"
+          placeholder="Your name"
+        >
+
+      </label>
+
+
+      <label>
+        Phone number
+
+        <input
+          id="phone"
+          type="tel"
+          autocomplete="tel"
+          placeholder="08X-XXX-XXXX"
+        >
+
+      </label>
+
+
+      <div class="booking-summary">
+
+        <h3>
+          Appointment summary
+        </h3>
+
+        <div id="details-summary"></div>
+
+      </div>
+
+
+      <div class="button-row">
+
+        <button
+          class="ghost-button"
+          type="button"
+          data-back="1"
+        >
+          Back
+        </button>
+
+        <button
+          id="next-date"
+          class="primary-button"
+          type="button"
+        >
+          Choose date
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- STEP 3 -->
+
+    <section
+      id="step3"
+      class="step"
+    >
+
+      <div class="section-heading">
+
+        <span class="eyebrow">
+          STEP 03
+        </span>
+
+        <h2>
+          Choose your appointment
+        </h2>
+
+        <p>
+          Only available start times are shown.
+        </p>
+
+      </div>
+
+
+      <label>
+        Date
+
+        <input
+          id="booking-date"
+          type="date"
+        >
+
+      </label>
+
+
+      <div class="time-heading">
+
+        <span>Available times</span>
+
+        <span id="loading-times">
+          Checking...
+        </span>
+
+      </div>
+
+
+      <div
+        id="time-slots"
+        class="time-grid"
+      ></div>
+
+
+      <div
+        id="slot-message"
+        class="message"
+      ></div>
+
+
+      <div class="button-row">
+
+        <button
+          class="ghost-button"
+          type="button"
+          data-back="2"
+        >
+          Back
+        </button>
+
+        <button
+          id="next-payment"
+          class="primary-button"
+          type="button"
+          disabled
+        >
+          Continue to payment
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- STEP 4 -->
+
+    <section
+      id="step4"
+      class="step"
+    >
+
+      <div class="section-heading">
+
+        <span class="eyebrow">
+          STEP 04
+        </span>
+
+        <h2>
+          Confirm your booking
+        </h2>
+
+        <p>
+          Review your appointment before paying the deposit.
+        </p>
+
+      </div>
+
+
+      <div
+        id="final-summary"
+        class="final-summary"
+      ></div>
+
+
+      <div class="deposit-notice">
+
+        <strong>
+          Deposit required
+        </strong>
+
+        <p>
+          Your appointment will be reserved after successful payment.
+        </p>
+
+      </div>
+
+
+      <div
+        id="checkout-error"
+        class="error-message"
+      ></div>
+
+
+      <div class="button-row">
+
+        <button
+          class="ghost-button"
+          type="button"
+          data-back="3"
+        >
+          Back
+        </button>
+
+        <button
+          id="pay-deposit"
+          class="primary-button"
+          type="button"
+        >
+          Pay deposit
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- SUCCESS -->
+
+    <section
+      id="success"
+      class="result-screen"
     >
 
       <div class="success-icon">
         ✓
       </div>
 
-      <p class="eyebrow">
+      <span class="eyebrow">
         BOOKING CONFIRMED
-      </p>
+      </span>
 
       <h2>
         Your appointment is confirmed
@@ -896,48 +415,31 @@
         Thank you for booking with Lunessa Pet Boutique.
       </p>
 
-      <div class="confirmation-card">
-
-        <div class="confirmation-row">
-
-          <span>
-            Booking ID
-          </span>
-
-          <strong id="confirmationBookingId">
-            —
-          </strong>
-
-        </div>
-
-      </div>
-
-      <p class="small-note">
-        Your appointment has been added to our booking system.
-      </p>
+      <div
+        id="success-details"
+        class="success-details"
+      ></div>
 
     </section>
 
 
-    <!-- ==================================================
-         CANCELLED
-    =================================================== -->
+    <!-- CANCEL -->
 
     <section
-      id="cancelledState"
-      class="success-state hidden"
+      id="cancelled"
+      class="result-screen"
     >
 
       <div class="cancel-icon">
         ×
       </div>
 
-      <p class="eyebrow">
+      <span class="eyebrow">
         PAYMENT CANCELLED
-      </p>
+      </span>
 
       <h2>
-        Your payment was not completed
+        Your payment was cancelled
       </h2>
 
       <p>
@@ -945,32 +447,33 @@
       </p>
 
       <button
-        type="button"
-        id="returnToBooking"
+        id="return-booking"
         class="primary-button"
+        type="button"
       >
         Return to booking
       </button>
 
     </section>
 
+
+    <footer>
+
+      <p>
+        Lunessa Pet Boutique
+      </p>
+
+      <p>
+        Grooming • Care • Love
+      </p>
+
+    </footer>
+
   </main>
-
-
-  <footer class="site-footer">
-
-    <div>
-      LUNESSA PET BOUTIQUE
-    </div>
-
-    <span>
-      Pet Grooming • By Appointment
-    </span>
-
-  </footer>
 
 
   <script src="script.js"></script>
 
 </body>
+
 </html>
