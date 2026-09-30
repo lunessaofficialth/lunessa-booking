@@ -1,6 +1,9 @@
 /*************************************************
  * LUNESSA PET BOUTIQUE
- * FRONTEND BOOKING ENGINE v1.0
+ * FRONTEND BOOKING ENGINE v1.1
+ *
+ * UI / LANGUAGE UPDATE ONLY
+ * PAYMENT & BOOKING FLOW PRESERVED
  *************************************************/
 
 
@@ -13,9 +16,483 @@ const API_URL =
 
 
 /*************************************************
- * SERVICE DEFINITIONS
+ * LANGUAGE
+ *************************************************/
+
+let currentLang =
+  localStorage.getItem('lunessaBookingLang') || 'th';
+
+
+const I18N = {
+
+  th: {
+
+    backHome: '← กลับหน้าหลัก',
+
+    progressPets: 'น้อง',
+    progressDetails: 'ข้อมูล',
+    progressDate: 'วันเวลา',
+    progressPayment: 'ยืนยัน',
+
+    step01: 'STEP 01',
+    step02: 'STEP 02',
+    step03: 'STEP 03',
+    step04: 'STEP 04',
+
+    petHeading: 'เล่าให้เรารู้จักน้อง',
+    petDescription: 'สามารถจองได้สูงสุด 2 น้องต่อหนึ่งการจอง',
+
+    addPet: 'เพิ่มน้องอีกตัว',
+
+    estimatedTime: 'ระยะเวลาโดยประมาณ',
+    deposit: 'มัดจำ',
+
+    continue: 'ดำเนินการต่อ',
+    back: 'ย้อนกลับ',
+
+    detailsHeading: 'ข้อมูลสำหรับการจอง',
+    detailsDescription:
+      'ข้อมูลนี้ใช้สำหรับยืนยันและติดต่อเกี่ยวกับนัดหมายของคุณ',
+
+    ownerName: 'ชื่อเจ้าของ',
+    ownerPlaceholder: 'ชื่อของคุณ',
+    phoneNumber: 'เบอร์โทรศัพท์',
+
+    appointmentSummary: 'สรุปการจอง',
+
+    chooseDate: 'เลือกวันและเวลา',
+
+    dateHeading: 'เลือกวันและเวลานัดหมาย',
+    dateDescription:
+      'ระบบจะแสดงเฉพาะช่วงเวลาที่สามารถจองได้',
+
+    date: 'วันที่',
+    availableTimes: 'เวลาที่ว่าง',
+
+    continueConfirm: 'ตรวจสอบการจอง',
+
+    confirmHeading: 'ตรวจสอบและยืนยันการจอง',
+    confirmDescription:
+      'กรุณาตรวจสอบรายละเอียดก่อนชำระมัดจำ',
+
+    lateTitle: 'เรื่องเวลาเข้ารับบริการ',
+
+    latePolicy:
+      'ทางร้านขอสงวนเวลาให้กับน้องทุกคิวอย่างเต็มที่ หากมาสาย สามารถเลทได้ไม่เกิน 15 นาที หากเกินเวลาที่กำหนด มัดจำจะถูกหักโดยอัตโนมัติ',
+
+    emergencyPolicy:
+      'หากเกิดเหตุฉุกเฉินหรือมีเหตุจำเป็นระหว่างเดินทาง กรุณาติดต่อช่างทาง LINE โดยเร็วที่สุด เพื่อให้ทางร้านช่วยดูแลคิวให้เหมาะสม',
+
+    depositRequired: 'มัดจำเพื่อยืนยันคิว',
+
+    depositDescription:
+      'คิวของคุณจะได้รับการยืนยันหลังจากชำระมัดจำสำเร็จ',
+
+    payDeposit: 'ชำระมัดจำ',
+
+    bookingConfirmed: 'BOOKING CONFIRMED',
+    successHeading: 'จองคิวเรียบร้อยแล้ว',
+
+    successDescription:
+      'ขอบคุณที่ไว้วางใจ Lunessa Pet Boutique',
+
+    paymentCancelled: 'PAYMENT CANCELLED',
+    cancelHeading: 'การชำระเงินถูกยกเลิก',
+
+    cancelDescription:
+      'คิวของคุณยังไม่ได้รับการยืนยัน',
+
+    returnBooking: 'กลับไปหน้าจอง',
+
+    footerTagline: 'GROOMING • CARE • LOVE',
+
+    firstPet: 'น้องตัวแรก',
+    secondPet: 'น้องตัวที่สอง',
+
+    petName: 'ชื่อน้อง',
+    petNamePlaceholder: 'ชื่อของน้อง',
+
+    petType: 'ประเภทน้อง',
+    dog: 'สุนัข',
+    cat: 'แมว',
+
+    service: 'บริการ',
+
+    caution: 'ข้อควรระวัง / สิ่งที่ช่างควรรู้',
+    cautionPlaceholder:
+      'เช่น กลัวน้ำ, กลัวไดร์, ไม่ชอบจับเท้า',
+
+    cautionHelp:
+      'แจ้งรายละเอียดเล็ก ๆ น้อย ๆ ที่จะช่วยให้ช่างดูแลน้องได้อย่างเหมาะสม',
+
+    cautionPolicy:
+      'เพื่อความปลอดภัยของน้องและช่าง ทางร้านขอสงวนสิทธิ์ไม่รับน้องที่มีพฤติกรรมดุ กัด ตบ หรือมีความกลัว/ความเครียดรุนแรงจนไม่สามารถทำบริการได้ หากไม่แน่ใจว่าน้องเหมาะกับการเข้ารับบริการ สามารถติดต่อทาง LINE เพื่อให้ช่างช่วยประเมินน้องก่อนจองคิว',
+
+    remove: 'ลบ',
+
+    totalTime: 'ระยะเวลารวม',
+    hours: 'ชั่วโมง',
+    hour: 'ชั่วโมง',
+
+    owner: 'เจ้าของ',
+    phone: 'เบอร์โทรศัพท์',
+    duration: 'ระยะเวลา',
+    bookingDate: 'วันที่',
+    bookingTime: 'เวลา',
+
+    checking: 'กำลังตรวจสอบ...',
+    noSlots:
+      'วันนี้ไม่มีเวลาว่างสำหรับบริการที่เลือก',
+
+    loadError:
+      'ไม่สามารถโหลดเวลาว่างได้ กรุณาลองใหม่อีกครั้ง',
+
+    selectDateTime:
+      'กรุณาเลือกวันและเวลา',
+
+    ownerRequired:
+      'กรุณากรอกชื่อเจ้าของ',
+
+    phoneRequired:
+      'กรุณากรอกเบอร์โทรศัพท์',
+
+    petNameRequired:
+      'กรุณากรอกชื่อน้องให้ครบ',
+
+    serviceError:
+      'ไม่สามารถคำนวณบริการได้',
+
+    preparingPayment:
+      'กำลังเตรียมการชำระเงิน...',
+
+    paymentError:
+      'เกิดข้อผิดพลาด กรุณาลองใหม่',
+
+    bookingId: 'หมายเลขการจอง',
+
+    verifyingPayment:
+      'กำลังตรวจสอบการชำระเงิน',
+
+    verifyingDescription:
+      'ได้รับข้อมูลการชำระเงินแล้ว และกำลังยืนยันการจองของคุณ'
+
+  },
+
+
+  en: {
+
+    backHome: '← Back to Home',
+
+    progressPets: 'Pets',
+    progressDetails: 'Details',
+    progressDate: 'Date',
+    progressPayment: 'Confirm',
+
+    step01: 'STEP 01',
+    step02: 'STEP 02',
+    step03: 'STEP 03',
+    step04: 'STEP 04',
+
+    petHeading: 'Tell us about your pet',
+    petDescription: 'You can book up to 2 pets per appointment.',
+
+    addPet: 'Add another pet',
+
+    estimatedTime: 'Estimated time',
+    deposit: 'Deposit',
+
+    continue: 'Continue',
+    back: 'Back',
+
+    detailsHeading: 'Your details',
+    detailsDescription:
+      'We need these details to confirm and contact you about your appointment.',
+
+    ownerName: 'Owner name',
+    ownerPlaceholder: 'Your name',
+    phoneNumber: 'Phone number',
+
+    appointmentSummary: 'Appointment summary',
+
+    chooseDate: 'Choose date & time',
+
+    dateHeading: 'Choose your appointment',
+    dateDescription:
+      'Only available start times are shown.',
+
+    date: 'Date',
+    availableTimes: 'Available times',
+
+    continueConfirm: 'Review booking',
+
+    confirmHeading: 'Review & confirm your booking',
+    confirmDescription:
+      'Please review your appointment before paying the deposit.',
+
+    lateTitle: 'Arrival time',
+
+    latePolicy:
+      'We kindly reserve each appointment especially for your pet. A grace period of up to 15 minutes is allowed. Arrivals more than 15 minutes late may result in the deposit being automatically forfeited.',
+
+    emergencyPolicy:
+      'If an emergency or unexpected delay occurs, please contact our groomer via LINE as soon as possible so we can help manage your appointment.',
+
+    depositRequired: 'Deposit required to confirm',
+
+    depositDescription:
+      'Your appointment will be confirmed after successful payment.',
+
+    payDeposit: 'Pay deposit',
+
+    bookingConfirmed: 'BOOKING CONFIRMED',
+    successHeading: 'Your appointment is confirmed',
+
+    successDescription:
+      'Thank you for booking with Lunessa Pet Boutique.',
+
+    paymentCancelled: 'PAYMENT CANCELLED',
+    cancelHeading: 'Your payment was cancelled',
+
+    cancelDescription:
+      'Your appointment has not been confirmed.',
+
+    returnBooking: 'Return to booking',
+
+    footerTagline: 'GROOMING • CARE • LOVE',
+
+    firstPet: 'First pet',
+    secondPet: 'Second pet',
+
+    petName: 'Pet name',
+    petNamePlaceholder: 'Pet name',
+
+    petType: 'Pet type',
+    dog: 'Dog',
+    cat: 'Cat',
+
+    service: 'Service',
+
+    caution: 'Special care notes',
+    cautionPlaceholder:
+      'e.g. afraid of water, afraid of dryer, dislikes paw handling',
+
+    cautionHelp:
+      'A little information helps our groomer care for your pet more comfortably.',
+
+    cautionPolicy:
+      'For the safety and comfort of both pets and our groomers, we reserve the right to decline pets that display aggressive behaviour such as biting or scratching, or pets experiencing severe fear or stress that makes grooming unsafe. If you are unsure, please contact us via LINE so our groomer can assess your pet before booking.',
+
+    remove: 'Remove',
+
+    totalTime: 'Total time',
+    hours: 'hours',
+    hour: 'hour',
+
+    owner: 'Owner',
+    phone: 'Phone',
+    duration: 'Duration',
+    bookingDate: 'Date',
+    bookingTime: 'Time',
+
+    checking: 'Checking...',
+    noSlots:
+      'No available times for the selected service today.',
+
+    loadError:
+      'Unable to load available times. Please try again.',
+
+    selectDateTime:
+      'Please select a date and time.',
+
+    ownerRequired:
+      'Please enter the owner name.',
+
+    phoneRequired:
+      'Please enter your phone number.',
+
+    petNameRequired:
+      'Please enter all pet names.',
+
+    serviceError:
+      'Unable to calculate the selected service.',
+
+    preparingPayment:
+      'Preparing payment...',
+
+    paymentError:
+      'Something went wrong. Please try again.',
+
+    bookingId: 'Booking ID',
+
+    verifyingPayment:
+      'Payment is being verified',
+
+    verifyingDescription:
+      'Your payment was received and your booking is being confirmed.'
+
+  },
+
+
+  zh: {
+
+    backHome: '← 返回首页',
+
+    progressPets: '宠物',
+    progressDetails: '资料',
+    progressDate: '日期',
+    progressPayment: '确认',
+
+    step01: 'STEP 01',
+    step02: 'STEP 02',
+    step03: 'STEP 03',
+    step04: 'STEP 04',
+
+    petHeading: '告诉我们关于宠物的信息',
+    petDescription: '每次预约最多可预约 2 只宠物。',
+
+    addPet: '添加另一只宠物',
+
+    estimatedTime: '预计时间',
+    deposit: '订金',
+
+    continue: '继续',
+    back: '返回',
+
+    detailsHeading: '您的资料',
+    detailsDescription:
+      '这些资料将用于确认预约及与您联系。',
+
+    ownerName: '主人姓名',
+    ownerPlaceholder: '您的姓名',
+    phoneNumber: '电话号码',
+
+    appointmentSummary: '预约摘要',
+
+    chooseDate: '选择日期和时间',
+
+    dateHeading: '选择预约日期和时间',
+    dateDescription:
+      '系统只会显示可预约的时间。',
+
+    date: '日期',
+    availableTimes: '可预约时间',
+
+    continueConfirm: '查看预约',
+
+    confirmHeading: '确认预约',
+    confirmDescription:
+      '付款前请确认您的预约资料。',
+
+    lateTitle: '到店时间',
+
+    latePolicy:
+      '我们会为每位宠物保留专属预约时间。最多可迟到 15 分钟；如超过 15 分钟，订金可能会自动扣除。',
+
+    emergencyPolicy:
+      '如遇突发情况或意外延误，请尽快通过 LINE 联系美容师，以便我们协助安排您的预约。',
+
+    depositRequired: '支付订金以确认预约',
+
+    depositDescription:
+      '成功支付订金后，您的预约才会正式确认。',
+
+    payDeposit: '支付订金',
+
+    bookingConfirmed: 'BOOKING CONFIRMED',
+    successHeading: '预约已确认',
+
+    successDescription:
+      '感谢您选择 Lunessa Pet Boutique。',
+
+    paymentCancelled: 'PAYMENT CANCELLED',
+    cancelHeading: '付款已取消',
+
+    cancelDescription:
+      '您的预约尚未确认。',
+
+    returnBooking: '返回预约',
+
+    footerTagline: 'GROOMING • CARE • LOVE',
+
+    firstPet: '第一只宠物',
+    secondPet: '第二只宠物',
+
+    petName: '宠物名字',
+    petNamePlaceholder: '宠物名字',
+
+    petType: '宠物类型',
+    dog: '狗狗',
+    cat: '猫咪',
+
+    service: '服务',
+
+    caution: '特别注意事项',
+    cautionPlaceholder:
+      '例如：怕水、怕吹风机、不喜欢碰脚',
+
+    cautionHelp:
+      '提供这些小信息，可以帮助美容师更温柔地照顾您的宠物。',
+
+    cautionPolicy:
+      '为了宠物及美容师的安全与舒适，我们保留拒绝具有攻击行为，例如咬人、抓人，或因严重害怕及压力而无法安全进行美容的宠物的权利。如果您不确定宠物是否适合美容，欢迎先通过 LINE 联系我们，让美容师在预约前协助评估。',
+
+    remove: '删除',
+
+    totalTime: '总时间',
+    hours: '小时',
+    hour: '小时',
+
+    owner: '主人',
+    phone: '电话号码',
+    duration: '服务时间',
+    bookingDate: '日期',
+    bookingTime: '时间',
+
+    checking: '检查中...',
+    noSlots:
+      '今天没有符合所选服务的可预约时间。',
+
+    loadError:
+      '无法加载可预约时间，请稍后再试。',
+
+    selectDateTime:
+      '请选择日期和时间。',
+
+    ownerRequired:
+      '请输入主人姓名。',
+
+    phoneRequired:
+      '请输入电话号码。',
+
+    petNameRequired:
+      '请填写所有宠物名字。',
+
+    serviceError:
+      '无法计算所选服务。',
+
+    preparingPayment:
+      '正在准备付款...',
+
+    paymentError:
+      '发生错误，请再试一次。',
+
+    bookingId: '预约编号',
+
+    verifyingPayment:
+      '正在确认付款',
+
+    verifyingDescription:
+      '我们已收到您的付款信息，正在确认预约。'
+
+  }
+
+};
+
+
+/*************************************************
+ * SERVICES
  *
- * MUST MATCH Code.gs
+ * UNCHANGED
  *************************************************/
 
 const SERVICES = {
@@ -54,7 +531,48 @@ const SERVICES = {
 
 
 /*************************************************
+ * SERVICE TRANSLATIONS
+ *************************************************/
+
+const SERVICE_TRANSLATIONS = {
+
+  bath: {
+    th: 'อาบน้ำ',
+    en: 'Bath',
+    zh: '洗澡'
+  },
+
+  clip: {
+    th: 'อาบน้ำ + ตัดไถ',
+    en: 'Bath + Clipper Grooming',
+    zh: '洗澡 + 电剪修剪'
+  },
+
+  scissor: {
+    th: 'อาบน้ำ + ตัดกรรไกร',
+    en: 'Bath + Scissor Grooming',
+    zh: '洗澡 + 剪刀修剪'
+  },
+
+  haircut_only: {
+    th: 'ตัดขนอย่างเดียว',
+    en: 'Haircut Only',
+    zh: '只剪毛'
+  },
+
+  addon: {
+    th: 'บริการเสริมอย่างเดียว',
+    en: 'Add-on Service',
+    zh: '附加服务'
+  }
+
+};
+
+
+/*************************************************
  * STATE
+ *
+ * BOOKING STRUCTURE PRESERVED
  *************************************************/
 
 const state = {
@@ -81,54 +599,34 @@ const state = {
  *************************************************/
 
 const petsContainer =
-  document.getElementById(
-    'pets-container'
-  );
+  document.getElementById('pets-container');
 
 const addPetButton =
-  document.getElementById(
-    'add-pet'
-  );
+  document.getElementById('add-pet');
 
 const ownerInput =
-  document.getElementById(
-    'owner'
-  );
+  document.getElementById('owner');
 
 const phoneInput =
-  document.getElementById(
-    'phone'
-  );
+  document.getElementById('phone');
 
 const dateInput =
-  document.getElementById(
-    'booking-date'
-  );
+  document.getElementById('booking-date');
 
 const timeSlots =
-  document.getElementById(
-    'time-slots'
-  );
+  document.getElementById('time-slots');
 
 const loadingTimes =
-  document.getElementById(
-    'loading-times'
-  );
+  document.getElementById('loading-times');
 
 const slotMessage =
-  document.getElementById(
-    'slot-message'
-  );
+  document.getElementById('slot-message');
 
 const nextPayment =
-  document.getElementById(
-    'next-payment'
-  );
+  document.getElementById('next-payment');
 
 const payDeposit =
-  document.getElementById(
-    'pay-deposit'
-  );
+  document.getElementById('pay-deposit');
 
 
 /*************************************************
@@ -143,6 +641,8 @@ document.addEventListener(
 
 function init() {
 
+  applyLanguage();
+
   handlePaymentReturn();
 
   setMinimumDate();
@@ -152,6 +652,143 @@ function init() {
   addEventListeners();
 
 }
+
+
+/*************************************************
+ * LANGUAGE FUNCTIONS
+ *************************************************/
+
+function t(key) {
+
+  return (
+    I18N[currentLang]?.[key] ||
+    I18N.th[key] ||
+    key
+  );
+
+}
+
+
+function applyLanguage() {
+
+  document.documentElement.lang =
+    currentLang;
+
+
+  document
+    .querySelectorAll('[data-i18n]')
+    .forEach(function(element) {
+
+      const key =
+        element.dataset.i18n;
+
+      if (
+        I18N[currentLang] &&
+        I18N[currentLang][key]
+      ) {
+
+        element.textContent =
+          I18N[currentLang][key];
+
+      }
+
+    });
+
+
+  document
+    .querySelectorAll('[data-placeholder]')
+    .forEach(function(element) {
+
+      const key =
+        element.dataset.placeholder;
+
+      element.placeholder =
+        t(key);
+
+    });
+
+
+  document
+    .querySelectorAll('.lang-button')
+    .forEach(function(button) {
+
+      button.classList.toggle(
+        'active',
+        button.dataset.lang === currentLang
+      );
+
+    });
+
+
+  updateSummary();
+
+  if (
+    state.pets.length
+  ) {
+
+    renderPets();
+
+  }
+
+
+  if (
+    state.date &&
+    state.time
+  ) {
+
+    renderFinalSummary();
+
+  }
+
+}
+
+
+/*************************************************
+ * LANGUAGE BUTTONS
+ *************************************************/
+
+function changeLanguage(lang) {
+
+  if (
+    !I18N[lang]
+  ) {
+
+    return;
+
+  }
+
+
+  currentLang =
+    lang;
+
+
+  localStorage.setItem(
+    'lunessaBookingLang',
+    lang
+  );
+
+
+  applyLanguage();
+
+}
+
+
+document
+  .querySelectorAll('.lang-button')
+  .forEach(function(button) {
+
+    button.addEventListener(
+      'click',
+      function() {
+
+        changeLanguage(
+          button.dataset.lang
+        );
+
+      }
+    );
+
+  });
 
 
 /*************************************************
@@ -179,9 +816,7 @@ function addEventListeners() {
 
 
   document
-    .getElementById(
-      'next-details'
-    )
+    .getElementById('next-details')
     .addEventListener(
       'click',
       goToDetails
@@ -189,9 +824,7 @@ function addEventListeners() {
 
 
   document
-    .getElementById(
-      'next-date'
-    )
+    .getElementById('next-date')
     .addEventListener(
       'click',
       goToDate
@@ -219,7 +852,8 @@ function addEventListeners() {
 
       state.time = '';
 
-      nextPayment.disabled = true;
+      nextPayment.disabled =
+        true;
 
       loadAvailableTimes();
 
@@ -228,9 +862,7 @@ function addEventListeners() {
 
 
   document
-    .querySelectorAll(
-      '[data-back]'
-    )
+    .querySelectorAll('[data-back]')
     .forEach(function(button) {
 
       button.addEventListener(
@@ -250,9 +882,7 @@ function addEventListeners() {
 
 
   document
-    .getElementById(
-      'return-booking'
-    )
+    .getElementById('return-booking')
     .addEventListener(
       'click',
       function() {
@@ -287,7 +917,9 @@ function addPet() {
 
     type: 'dog',
 
-    service: 'bath'
+    service: 'bath',
+
+    caution: ''
 
   });
 
@@ -332,9 +964,7 @@ function renderPets() {
     function(pet, index) {
 
       const card =
-        document.createElement(
-          'div'
-        );
+        document.createElement('div');
 
 
       card.className =
@@ -352,9 +982,11 @@ function renderPets() {
             </span>
 
             <h3>
-              ${index === 0
-                ? 'First pet'
-                : 'Second pet'}
+              ${
+                index === 0
+                  ? t('firstPet')
+                  : t('secondPet')
+              }
             </h3>
 
           </div>
@@ -367,7 +999,7 @@ function renderPets() {
                   class="remove-pet"
                   data-remove="${index}"
                 >
-                  Remove
+                  ${t('remove')}
                 </button>
               `
               : ''
@@ -378,16 +1010,14 @@ function renderPets() {
 
         <label>
 
-          Pet name
+          ${t('petName')}
 
           <input
             type="text"
             class="pet-name"
             data-index="${index}"
-            value="${escapeHtml(
-              pet.name
-            )}"
-            placeholder="Pet name"
+            value="${escapeHtml(pet.name)}"
+            placeholder="${t('petNamePlaceholder')}"
           >
 
         </label>
@@ -395,7 +1025,7 @@ function renderPets() {
 
         <label>
 
-          Pet type
+          ${t('petType')}
 
           <select
             class="pet-type"
@@ -410,7 +1040,7 @@ function renderPets() {
                   : ''
               }
             >
-              Dog
+              ${t('dog')}
             </option>
 
             <option
@@ -421,7 +1051,7 @@ function renderPets() {
                   : ''
               }
             >
-              Cat
+              ${t('cat')}
             </option>
 
           </select>
@@ -431,7 +1061,7 @@ function renderPets() {
 
         <label>
 
-          Service
+          ${t('service')}
 
           <select
             class="pet-service"
@@ -446,21 +1076,44 @@ function renderPets() {
 
         </label>
 
+
+        <label>
+
+          ${t('caution')}
+
+          <textarea
+            class="pet-caution"
+            data-index="${index}"
+            placeholder="${t('cautionPlaceholder')}"
+          >${escapeHtml(pet.caution)}</textarea>
+
+          <p class="field-help">
+            ${t('cautionHelp')}
+          </p>
+
+        </label>
+
+
+        <div class="caution-note">
+
+          <p>
+            <strong>* ${t('caution')}</strong><br>
+            ${t('cautionPolicy')}
+          </p>
+
+        </div>
+
       `;
 
 
-      petsContainer.appendChild(
-        card
-      );
+      petsContainer.appendChild(card);
 
     }
   );
 
 
   document
-    .querySelectorAll(
-      '.pet-name'
-    )
+    .querySelectorAll('.pet-name')
     .forEach(function(input) {
 
       input.addEventListener(
@@ -483,9 +1136,7 @@ function renderPets() {
 
 
   document
-    .querySelectorAll(
-      '.pet-type'
-    )
+    .querySelectorAll('.pet-type')
     .forEach(function(select) {
 
       select.addEventListener(
@@ -506,9 +1157,7 @@ function renderPets() {
 
 
   document
-    .querySelectorAll(
-      '.pet-service'
-    )
+    .querySelectorAll('.pet-service')
     .forEach(function(select) {
 
       select.addEventListener(
@@ -531,9 +1180,28 @@ function renderPets() {
 
 
   document
-    .querySelectorAll(
-      '.remove-pet'
-    )
+    .querySelectorAll('.pet-caution')
+    .forEach(function(input) {
+
+      input.addEventListener(
+        'input',
+        function() {
+
+          state.pets[
+            Number(
+              input.dataset.index
+            )
+          ].caution =
+            input.value;
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll('.remove-pet')
     .forEach(function(button) {
 
       button.addEventListener(
@@ -568,9 +1236,7 @@ function renderServiceOptions(
   selected
 ) {
 
-  return Object.keys(
-    SERVICES
-  )
+  return Object.keys(SERVICES)
     .map(function(key) {
 
       return `
@@ -582,7 +1248,10 @@ function renderServiceOptions(
               : ''
           }
         >
-          ${SERVICES[key].label}
+          ${
+            SERVICE_TRANSLATIONS[key]?.[currentLang] ||
+            SERVICES[key].label
+          }
         </option>
       `;
 
@@ -595,7 +1264,7 @@ function renderServiceOptions(
 /*************************************************
  * DURATION ENGINE
  *
- * MUST MATCH BACKEND.
+ * UNCHANGED
  *************************************************/
 
 function calculateHours() {
@@ -676,6 +1345,8 @@ function calculateHours() {
 
 /*************************************************
  * DEPOSIT
+ *
+ * UNCHANGED
  *************************************************/
 
 function calculateDeposit() {
@@ -711,22 +1382,19 @@ function updateSummary() {
 
 
   document
-    .getElementById(
-      'summary-hours'
-    )
+    .getElementById('summary-hours')
     .textContent =
     state.hours +
+    ' ' +
     (
       state.hours === 1
-        ? ' hour'
-        : ' hours'
+        ? t('hour')
+        : t('hours')
     );
 
 
   document
-    .getElementById(
-      'summary-deposit'
-    )
+    .getElementById('summary-deposit')
     .textContent =
     formatMoney(
       state.deposit
@@ -778,7 +1446,7 @@ function validatePets() {
     ) {
 
       alert(
-        'กรุณากรอกชื่อน้องให้ครบ'
+        t('petNameRequired')
       );
 
       return false;
@@ -801,7 +1469,7 @@ function validatePets() {
   ) {
 
     alert(
-      'ไม่สามารถคำนวณบริการได้'
+      t('serviceError')
     );
 
     return false;
@@ -830,7 +1498,7 @@ function goToDate() {
   if (!owner) {
 
     alert(
-      'กรุณากรอกชื่อเจ้าของ'
+      t('ownerRequired')
     );
 
     ownerInput.focus();
@@ -843,7 +1511,7 @@ function goToDate() {
   if (!phone) {
 
     alert(
-      'กรุณากรอกเบอร์โทรศัพท์'
+      t('phoneRequired')
     );
 
     phoneInput.focus();
@@ -853,9 +1521,11 @@ function goToDate() {
   }
 
 
-  state.owner = owner;
+  state.owner =
+    owner;
 
-  state.phone = phone;
+  state.phone =
+    phone;
 
 
   showStep(3);
@@ -894,6 +1564,8 @@ function setMinimumDate() {
 
 /*************************************************
  * LOAD AVAILABLE TIMES
+ *
+ * UNCHANGED BOOKING API
  *************************************************/
 
 async function loadAvailableTimes() {
@@ -908,10 +1580,11 @@ async function loadAvailableTimes() {
   slotMessage.textContent = '';
 
   loadingTimes.textContent =
-    'Checking...';
+    t('checking');
 
 
-  nextPayment.disabled = true;
+  nextPayment.disabled =
+    true;
 
 
   try {
@@ -937,13 +1610,11 @@ async function loadAvailableTimes() {
       await response.json();
 
 
-    if (
-      !data.ok
-    ) {
+    if (!data.ok) {
 
       throw new Error(
         data.message ||
-        'Unable to load times'
+        t('loadError')
       );
 
     }
@@ -959,7 +1630,7 @@ async function loadAvailableTimes() {
     console.error(error);
 
     slotMessage.textContent =
-      'ไม่สามารถโหลดเวลาว่างได้ กรุณาลองใหม่อีกครั้ง';
+      t('loadError');
 
   } finally {
 
@@ -981,6 +1652,7 @@ function renderAvailableTimes(
 
   timeSlots.innerHTML = '';
 
+
   const available =
     Object.keys(slots)
       .filter(function(time) {
@@ -995,7 +1667,7 @@ function renderAvailableTimes(
   ) {
 
     slotMessage.textContent =
-      'ไม่มีเวลาว่างสำหรับบริการที่เลือกในวันนี้';
+      t('noSlots');
 
     return;
 
@@ -1056,9 +1728,7 @@ function selectTime(
 ) {
 
   document
-    .querySelectorAll(
-      '.time-button'
-    )
+    .querySelectorAll('.time-button')
     .forEach(function(item) {
 
       item.classList.remove(
@@ -1095,7 +1765,7 @@ function goToPayment() {
   ) {
 
     alert(
-      'กรุณาเลือกวันและเวลา'
+      t('selectDateTime')
     );
 
     return;
@@ -1112,6 +1782,8 @@ function goToPayment() {
 
 /*************************************************
  * CREATE CHECKOUT
+ *
+ * PAYMENT FLOW PRESERVED
  *************************************************/
 
 async function createCheckout() {
@@ -1121,7 +1793,7 @@ async function createCheckout() {
 
 
   payDeposit.textContent =
-    'Preparing payment...';
+    t('preparingPayment');
 
 
   const errorBox =
@@ -1190,21 +1862,17 @@ async function createCheckout() {
       await response.json();
 
 
-    if (
-      !data.ok
-    ) {
+    if (!data.ok) {
 
       throw new Error(
         data.message ||
-        'ไม่สามารถสร้างการชำระเงินได้'
+        t('paymentError')
       );
 
     }
 
 
-    if (
-      !data.checkoutUrl
-    ) {
+    if (!data.checkoutUrl) {
 
       throw new Error(
         'Stripe checkout URL ไม่ถูกต้อง'
@@ -1223,7 +1891,7 @@ async function createCheckout() {
 
     errorBox.textContent =
       error.message ||
-      'เกิดข้อผิดพลาด กรุณาลองใหม่';
+      t('paymentError');
 
 
     payDeposit.disabled =
@@ -1231,7 +1899,7 @@ async function createCheckout() {
 
 
     payDeposit.textContent =
-      'Pay deposit';
+      t('payDeposit');
 
   }
 
@@ -1240,6 +1908,8 @@ async function createCheckout() {
 
 /*************************************************
  * PAYMENT RETURN
+ *
+ * UNCHANGED FLOW
  *************************************************/
 
 async function handlePaymentReturn() {
@@ -1267,12 +1937,8 @@ async function handlePaymentReturn() {
     hideAllMainSteps();
 
     document
-      .getElementById(
-        'cancelled'
-      )
-      .classList.add(
-        'active'
-      );
+      .getElementById('cancelled')
+      .classList.add('active');
 
     return;
 
@@ -1327,12 +1993,17 @@ async function handlePaymentReturn() {
           .innerHTML = `
 
             <div>
-              <span>Booking ID</span>
+
+              <span>
+                ${t('bookingId')}
+              </span>
+
               <strong>
                 ${escapeHtml(
                   data.bookingId || ''
                 )}
               </strong>
+
             </div>
 
           `;
@@ -1342,12 +2013,12 @@ async function handlePaymentReturn() {
         success.querySelector(
           'h2'
         ).textContent =
-          'Payment is being verified';
+          t('verifyingPayment');
 
         success.querySelector(
           'p'
         ).textContent =
-          'Your payment was received and your booking is being confirmed.';
+          t('verifyingDescription');
 
       }
 
@@ -1389,11 +2060,14 @@ function renderDetailsSummary() {
             </span>
 
             <strong>
-              ${escapeHtml(
+              ${
+                SERVICE_TRANSLATIONS[
+                  pet.service
+                ]?.[currentLang] ||
                 SERVICES[
                   pet.service
                 ].label
-              )}
+              }
             </strong>
 
           </div>
@@ -1406,15 +2080,15 @@ function renderDetailsSummary() {
         <div class="summary-total">
 
           <span>
-            Total time
+            ${t('totalTime')}
           </span>
 
           <strong>
             ${state.hours}
             ${
               state.hours === 1
-                ? 'hour'
-                : 'hours'
+                ? t('hour')
+                : t('hours')
             }
           </strong>
 
@@ -1423,7 +2097,7 @@ function renderDetailsSummary() {
         <div class="summary-total">
 
           <span>
-            Deposit
+            ${t('deposit')}
           </span>
 
           <strong>
@@ -1450,7 +2124,9 @@ function renderFinalSummary() {
 
     <div class="final-row">
 
-      <span>Owner</span>
+      <span>
+        ${t('owner')}
+      </span>
 
       <strong>
         ${escapeHtml(
@@ -1463,7 +2139,9 @@ function renderFinalSummary() {
 
     <div class="final-row">
 
-      <span>Phone</span>
+      <span>
+        ${t('phone')}
+      </span>
 
       <strong>
         ${escapeHtml(
@@ -1476,7 +2154,9 @@ function renderFinalSummary() {
 
     <div class="final-row">
 
-      <span>Date</span>
+      <span>
+        ${t('bookingDate')}
+      </span>
 
       <strong>
         ${formatDate(
@@ -1489,7 +2169,9 @@ function renderFinalSummary() {
 
     <div class="final-row">
 
-      <span>Time</span>
+      <span>
+        ${t('bookingTime')}
+      </span>
 
       <strong>
         ${state.time}
@@ -1500,14 +2182,16 @@ function renderFinalSummary() {
 
     <div class="final-row">
 
-      <span>Duration</span>
+      <span>
+        ${t('duration')}
+      </span>
 
       <strong>
         ${state.hours}
         ${
           state.hours === 1
-            ? 'hour'
-            : 'hours'
+            ? t('hour')
+            : t('hours')
         }
       </strong>
 
@@ -1530,11 +2214,14 @@ function renderFinalSummary() {
                 </strong>
 
                 <span>
-                  ${escapeHtml(
+                  ${
+                    SERVICE_TRANSLATIONS[
+                      pet.service
+                    ]?.[currentLang] ||
                     SERVICES[
                       pet.service
                     ].label
-                  )}
+                  }
                 </span>
 
               </div>
@@ -1550,7 +2237,7 @@ function renderFinalSummary() {
     <div class="final-deposit">
 
       <span>
-        Deposit
+        ${t('deposit')}
       </span>
 
       <strong>
@@ -1573,9 +2260,7 @@ function renderFinalSummary() {
 function showStep(step) {
 
   document
-    .querySelectorAll(
-      '.step'
-    )
+    .querySelectorAll('.step')
     .forEach(function(section) {
 
       section.classList.remove(
@@ -1601,9 +2286,7 @@ function showStep(step) {
 
 
   document
-    .querySelectorAll(
-      '.progress-step'
-    )
+    .querySelectorAll('.progress-step')
     .forEach(function(item) {
 
       const number =
@@ -1631,9 +2314,7 @@ function showStep(step) {
 function hideAllMainSteps() {
 
   document
-    .querySelectorAll(
-      '.step'
-    )
+    .querySelectorAll('.step')
     .forEach(function(section) {
 
       section.classList.remove(
@@ -1649,24 +2330,18 @@ function hideAllMainSteps() {
  * HELPERS
  *************************************************/
 
-function formatMoney(
-  value
-) {
+function formatMoney(value) {
 
   return (
     '฿' +
     Number(value || 0)
-      .toLocaleString(
-        'en-US'
-      )
+      .toLocaleString('en-US')
   );
 
 }
 
 
-function formatDate(
-  value
-) {
+function formatDate(value) {
 
   if (!value) {
     return '';
@@ -1697,9 +2372,7 @@ function formatDate(
 }
 
 
-function escapeHtml(
-  value
-) {
+function escapeHtml(value) {
 
   return String(
     value || ''
