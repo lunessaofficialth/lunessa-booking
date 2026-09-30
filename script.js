@@ -22,13 +22,13 @@ const SERVICES = {
 
   bath: {
     label: 'อาบน้ำ',
-    hours: 1,
+    hours: 2,
     deposit: 200
   },
 
   clip: {
     label: 'อาบน้ำ + ตัดไถ',
-    hours: 2,
+    hours: 3,
     deposit: 400
   },
 
