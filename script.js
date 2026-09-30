@@ -1,493 +1,810 @@
-/* =====================================================
-   LUNESSA PET BOUTIQUE
-   BOOKING SYSTEM
-   FRONTEND / BOOKING ENGINE v1.0
-===================================================== */
+/*************************************************
+ * LUNESSA PET BOUTIQUE
+ * FRONTEND BOOKING ENGINE v1.0
+ *************************************************/
 
 
-/* =====================================================
-   CONFIG
-=====================================================
-
-   IMPORTANT:
-   Put the deployed Google Apps Script Web App URL here.
-
-   Example:
-
-   https://script.google.com/macros/s/XXXXXXXXXXXX/exec
-
-===================================================== */
+/*************************************************
+ * API
+ *************************************************/
 
 const API_URL =
   'https://script.google.com/macros/s/AKfycbxDEYq9veZKBkjdiQT_mX3YPuFAbWx0lgXCN6RTCBfwWJuBUztLJxfBfkJtbzYP6H7Oig/exec';
 
 
-/* =====================================================
-   GLOBAL STATE
-===================================================== */
+/*************************************************
+ * SERVICE DEFINITIONS
+ *
+ * MUST MATCH Code.gs
+ *************************************************/
+
+const SERVICES = {
+
+  bath: {
+    label: 'อาบน้ำ',
+    hours: 1,
+    deposit: 200
+  },
+
+  clip: {
+    label: 'อาบน้ำ + ตัดไถ',
+    hours: 2,
+    deposit: 400
+  },
+
+  scissor: {
+    label: 'อาบน้ำ + ตัดกรรไกร',
+    hours: 3,
+    deposit: 400
+  },
+
+  haircut_only: {
+    label: 'ตัดขนอย่างเดียว',
+    hours: 2,
+    deposit: 400
+  },
+
+  addon: {
+    label: 'บริการเสริมอย่างเดียว',
+    hours: 1,
+    deposit: 200
+  }
+
+};
+
+
+/*************************************************
+ * STATE
+ *************************************************/
 
 const state = {
 
-  step: 1,
-
   pets: [],
-
-  hours: 0,
-
-  deposit: 0,
-
-  date: '',
-
-  time: '',
 
   owner: '',
 
   phone: '',
 
-  availableSlots: {}
+  date: '',
+
+  time: '',
+
+  hours: 0,
+
+  deposit: 0
 
 };
 
 
-/* =====================================================
-   DOM
-===================================================== */
+/*************************************************
+ * DOM
+ *************************************************/
 
-const $ = (selector) =>
-  document.querySelector(selector);
+const petsContainer =
+  document.getElementById(
+    'pets-container'
+  );
 
+const addPetButton =
+  document.getElementById(
+    'add-pet'
+  );
 
-const $$ = (selector) =>
-  document.querySelectorAll(selector);
+const ownerInput =
+  document.getElementById(
+    'owner'
+  );
 
+const phoneInput =
+  document.getElementById(
+    'phone'
+  );
 
-/* =====================================================
-   SERVICE RULES
-===================================================== */
+const dateInput =
+  document.getElementById(
+    'booking-date'
+  );
 
-const SERVICE_HOURS = {
+const timeSlots =
+  document.getElementById(
+    'time-slots'
+  );
 
-  bath: 1,
+const loadingTimes =
+  document.getElementById(
+    'loading-times'
+  );
 
-  clip: 2,
+const slotMessage =
+  document.getElementById(
+    'slot-message'
+  );
 
-  scissor: 2,
+const nextPayment =
+  document.getElementById(
+    'next-payment'
+  );
 
-  haircut_only: 2,
-
-  addon: 1
-
-};
-
-
-const SERVICE_DEPOSIT = {
-
-  bath: 200,
-
-  clip: 400,
-
-  scissor: 400,
-
-  haircut_only: 200,
-
-  addon: 200
-
-};
-
-
-const SERVICE_LABELS = {
-
-  bath:
-    'Bath',
-
-  clip:
-    'Bath + Clipping',
-
-  scissor:
-    'Bath + Scissor',
-
-  haircut_only:
-    'Haircut only',
-
-  addon:
-    'Additional service only'
-
-};
+const payDeposit =
+  document.getElementById(
+    'pay-deposit'
+  );
 
 
-/* =====================================================
-   INITIALIZE
-===================================================== */
+/*************************************************
+ * INIT
+ *************************************************/
 
 document.addEventListener(
   'DOMContentLoaded',
-  initialize
+  init
 );
 
 
-function initialize() {
+function init() {
 
-  setupDateMinimum();
+  handlePaymentReturn();
 
-  bindEvents();
+  setMinimumDate();
 
-  handleReturnFromStripe();
+  addPet();
 
-  updateBookingSummary();
+  addEventListeners();
 
 }
 
 
-/* =====================================================
-   EVENTS
-===================================================== */
+/*************************************************
+ * EVENT LISTENERS
+ *************************************************/
 
-function bindEvents() {
+function addEventListeners() {
 
-  $('#addPetButton')
-    .addEventListener(
-      'click',
-      addSecondPet
-    );
+  addPetButton.addEventListener(
+    'click',
+    function() {
 
+      if (
+        state.pets.length >= 2
+      ) {
 
-  $('#removePet2')
-    .addEventListener(
-      'click',
-      removeSecondPet
-    );
-
-
-  $('#continueToDate')
-    .addEventListener(
-      'click',
-      goToDateStep
-    );
-
-
-  $('#backToPets')
-    .addEventListener(
-      'click',
-      () => showStep(1)
-    );
-
-
-  $('#continueToDetails')
-    .addEventListener(
-      'click',
-      goToDetailsStep
-    );
-
-
-  $('#backToDate')
-    .addEventListener(
-      'click',
-      () => showStep(2)
-    );
-
-
-  $('#bookingDate')
-    .addEventListener(
-      'change',
-      handleDateChange
-    );
-
-
-  $('#bookingForm')
-    .addEventListener(
-      'submit',
-      handleSubmit
-    );
-
-
-  $('#returnToBooking')
-    .addEventListener(
-      'click',
-      resetBooking
-    );
-
-
-  $$('.service-option input')
-    .forEach(
-      input => {
-
-        input.addEventListener(
-          'change',
-          updateBookingSummary
-        );
+        return;
 
       }
-    );
 
-}
-
-
-/* =====================================================
-   DATE
-===================================================== */
-
-function setupDateMinimum() {
-
-  const today =
-    new Date();
-
-
-  const year =
-    today.getFullYear();
-
-
-  const month =
-    String(
-      today.getMonth() + 1
-    ).padStart(2, '0');
-
-
-  const day =
-    String(
-      today.getDate()
-    ).padStart(2, '0');
-
-
-  const dateString =
-    `${year}-${month}-${day}`;
-
-
-  $('#bookingDate')
-    .min = dateString;
-
-}
-
-
-/* =====================================================
-   PET MANAGEMENT
-===================================================== */
-
-function addSecondPet() {
-
-  $('#pet2Card')
-    .classList
-    .remove('hidden');
-
-
-  $('#addPetButton')
-    .classList
-    .add('hidden');
-
-
-  updateBookingSummary();
-
-}
-
-
-function removeSecondPet() {
-
-  $('#pet2Card')
-    .classList
-    .add('hidden');
-
-
-  $('#addPetButton')
-    .classList
-    .remove('hidden');
-
-
-  clearPet2();
-
-  updateBookingSummary();
-
-}
-
-
-function clearPet2() {
-
-  $('#pet2Name').value = '';
-
-  $('#pet2Type').value = '';
-
-  $$('input[name="pet2Service"]')
-    .forEach(
-      input => {
-        input.checked = false;
-      }
-    );
-
-}
-
-
-/* =====================================================
-   READ PET DATA
-===================================================== */
-
-function readPetData() {
-
-  const pets = [];
-
-
-  const pet1 =
-    readPet(1);
-
-
-  if (pet1) {
-
-    pets.push(pet1);
-
-  }
-
-
-  const pet2Visible =
-    !$('#pet2Card')
-      .classList
-      .contains('hidden');
-
-
-  if (pet2Visible) {
-
-    const pet2 =
-      readPet(2);
-
-
-    if (pet2) {
-
-      pets.push(pet2);
+      addPet();
 
     }
+  );
 
-  }
+
+  document
+    .getElementById(
+      'next-details'
+    )
+    .addEventListener(
+      'click',
+      goToDetails
+    );
 
 
-  return pets;
+  document
+    .getElementById(
+      'next-date'
+    )
+    .addEventListener(
+      'click',
+      goToDate
+    );
+
+
+  nextPayment.addEventListener(
+    'click',
+    goToPayment
+  );
+
+
+  payDeposit.addEventListener(
+    'click',
+    createCheckout
+  );
+
+
+  dateInput.addEventListener(
+    'change',
+    function() {
+
+      state.date =
+        dateInput.value;
+
+      state.time = '';
+
+      nextPayment.disabled = true;
+
+      loadAvailableTimes();
+
+    }
+  );
+
+
+  document
+    .querySelectorAll(
+      '[data-back]'
+    )
+    .forEach(function(button) {
+
+      button.addEventListener(
+        'click',
+        function() {
+
+          showStep(
+            Number(
+              button.dataset.back
+            )
+          );
+
+        }
+      );
+
+    });
+
+
+  document
+    .getElementById(
+      'return-booking'
+    )
+    .addEventListener(
+      'click',
+      function() {
+
+        window.location.href =
+          window.location.pathname;
+
+      }
+    );
 
 }
 
 
-function readPet(number) {
+/*************************************************
+ * PET MANAGEMENT
+ *************************************************/
 
-  const name =
-    $(`#pet${number}Name`)
-      .value
-      .trim();
+function addPet() {
 
+  if (
+    state.pets.length >= 2
+  ) {
 
-  const type =
-    $(`#pet${number}Type`)
-      .value;
+    return;
 
-
-  const serviceInput =
-    document.querySelector(
-      `input[name="pet${number}Service"]:checked`
-    );
+  }
 
 
-  const service =
-    serviceInput
-      ? serviceInput.value
-      : '';
+  state.pets.push({
+
+    name: '',
+
+    type: 'dog',
+
+    service: 'bath'
+
+  });
+
+
+  renderPets();
+
+  updateSummary();
+
+}
+
+
+function removePet(index) {
+
+  if (
+    state.pets.length <= 1
+  ) {
+
+    return;
+
+  }
+
+
+  state.pets.splice(
+    index,
+    1
+  );
+
+
+  renderPets();
+
+  updateSummary();
+
+}
+
+
+function renderPets() {
+
+  petsContainer.innerHTML = '';
+
+
+  state.pets.forEach(
+    function(pet, index) {
+
+      const card =
+        document.createElement(
+          'div'
+        );
+
+
+      card.className =
+        'pet-card';
+
+
+      card.innerHTML = `
+
+        <div class="pet-card-header">
+
+          <div>
+
+            <span class="pet-number">
+              PET ${index + 1}
+            </span>
+
+            <h3>
+              ${index === 0
+                ? 'First pet'
+                : 'Second pet'}
+            </h3>
+
+          </div>
+
+          ${
+            state.pets.length > 1
+              ? `
+                <button
+                  type="button"
+                  class="remove-pet"
+                  data-remove="${index}"
+                >
+                  Remove
+                </button>
+              `
+              : ''
+          }
+
+        </div>
+
+
+        <label>
+
+          Pet name
+
+          <input
+            type="text"
+            class="pet-name"
+            data-index="${index}"
+            value="${escapeHtml(
+              pet.name
+            )}"
+            placeholder="Pet name"
+          >
+
+        </label>
+
+
+        <label>
+
+          Pet type
+
+          <select
+            class="pet-type"
+            data-index="${index}"
+          >
+
+            <option
+              value="dog"
+              ${
+                pet.type === 'dog'
+                  ? 'selected'
+                  : ''
+              }
+            >
+              Dog
+            </option>
+
+            <option
+              value="cat"
+              ${
+                pet.type === 'cat'
+                  ? 'selected'
+                  : ''
+              }
+            >
+              Cat
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <label>
+
+          Service
+
+          <select
+            class="pet-service"
+            data-index="${index}"
+          >
+
+            ${renderServiceOptions(
+              pet.service
+            )}
+
+          </select>
+
+        </label>
+
+      `;
+
+
+      petsContainer.appendChild(
+        card
+      );
+
+    }
+  );
+
+
+  document
+    .querySelectorAll(
+      '.pet-name'
+    )
+    .forEach(function(input) {
+
+      input.addEventListener(
+        'input',
+        function() {
+
+          state.pets[
+            Number(
+              input.dataset.index
+            )
+          ].name =
+            input.value;
+
+          updateSummary();
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(
+      '.pet-type'
+    )
+    .forEach(function(select) {
+
+      select.addEventListener(
+        'change',
+        function() {
+
+          state.pets[
+            Number(
+              select.dataset.index
+            )
+          ].type =
+            select.value;
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(
+      '.pet-service'
+    )
+    .forEach(function(select) {
+
+      select.addEventListener(
+        'change',
+        function() {
+
+          state.pets[
+            Number(
+              select.dataset.index
+            )
+          ].service =
+            select.value;
+
+          updateSummary();
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(
+      '.remove-pet'
+    )
+    .forEach(function(button) {
+
+      button.addEventListener(
+        'click',
+        function() {
+
+          removePet(
+            Number(
+              button.dataset.remove
+            )
+          );
+
+        }
+      );
+
+    });
+
+
+  addPetButton.style.display =
+    state.pets.length >= 2
+      ? 'none'
+      : 'block';
+
+}
+
+
+/*************************************************
+ * SERVICE OPTIONS
+ *************************************************/
+
+function renderServiceOptions(
+  selected
+) {
+
+  return Object.keys(
+    SERVICES
+  )
+    .map(function(key) {
+
+      return `
+        <option
+          value="${key}"
+          ${
+            selected === key
+              ? 'selected'
+              : ''
+          }
+        >
+          ${SERVICES[key].label}
+        </option>
+      `;
+
+    })
+    .join('');
+
+}
+
+
+/*************************************************
+ * DURATION ENGINE
+ *
+ * MUST MATCH BACKEND.
+ *************************************************/
+
+function calculateHours() {
+
+  if (
+    state.pets.length === 0
+  ) {
+
+    return 0;
+
+  }
 
 
   if (
-    !name &&
-    !type &&
-    !service
+    state.pets.length === 1
   ) {
 
-    return null;
+    return SERVICES[
+      state.pets[0].service
+    ].hours;
 
   }
 
 
-  return {
+  const services =
+    state.pets
+      .map(function(pet) {
 
-    name,
+        return pet.service;
 
-    type,
+      })
+      .sort();
 
-    service
+
+  const key =
+    services.join('+');
+
+
+  const combinations = {
+
+    'addon+addon': 1,
+
+    'addon+bath': 2,
+
+    'addon+haircut_only': 3,
+
+    'addon+clip': 4,
+
+    'addon+scissor': 4,
+
+    'bath+bath': 3,
+
+    'bath+haircut_only': 3,
+
+    'bath+clip': 4,
+
+    'bath+scissor': 4,
+
+    'haircut_only+haircut_only': 3,
+
+    'haircut_only+clip': 4,
+
+    'haircut_only+scissor': 4,
+
+    'clip+clip': 4,
+
+    'clip+scissor': 4,
+
+    'scissor+scissor': 4
 
   };
 
+
+  return combinations[key] || 0;
+
 }
 
 
-/* =====================================================
-   VALIDATE PETS
-===================================================== */
+/*************************************************
+ * DEPOSIT
+ *************************************************/
+
+function calculateDeposit() {
+
+  return state.pets.reduce(
+    function(total, pet) {
+
+      return (
+        total +
+        SERVICES[
+          pet.service
+        ].deposit
+      );
+
+    },
+    0
+  );
+
+}
+
+
+/*************************************************
+ * SUMMARY
+ *************************************************/
+
+function updateSummary() {
+
+  state.hours =
+    calculateHours();
+
+  state.deposit =
+    calculateDeposit();
+
+
+  document
+    .getElementById(
+      'summary-hours'
+    )
+    .textContent =
+    state.hours +
+    (
+      state.hours === 1
+        ? ' hour'
+        : ' hours'
+    );
+
+
+  document
+    .getElementById(
+      'summary-deposit'
+    )
+    .textContent =
+    formatMoney(
+      state.deposit
+    );
+
+}
+
+
+/*************************************************
+ * STEP 1
+ *************************************************/
+
+function goToDetails() {
+
+  const valid =
+    validatePets();
+
+
+  if (!valid) {
+    return;
+  }
+
+
+  showStep(2);
+
+  renderDetailsSummary();
+
+}
+
+
+/*************************************************
+ * VALIDATE PETS
+ *************************************************/
 
 function validatePets() {
 
-  const error =
-    $('#step1Error');
-
-
-  error.textContent = '';
-
-
-  const pets =
-    readPetData();
-
-
-  if (
-    pets.length < 1
-  ) {
-
-    error.textContent =
-      'Please enter at least one pet.';
-
-    return false;
-
-  }
-
-
-  if (
-    pets.length > 2
-  ) {
-
-    error.textContent =
-      'Maximum 2 pets per booking.';
-
-    return false;
-
-  }
-
-
   for (
     let i = 0;
-    i < pets.length;
+    i < state.pets.length;
     i++
   ) {
 
     const pet =
-      pets[i];
+      state.pets[i];
 
 
-    if (!pet.name) {
+    if (
+      !pet.name.trim()
+    ) {
 
-      error.textContent =
-        `Please enter Pet ${i + 1}'s name.`;
-
-      return false;
-
-    }
-
-
-    if (!pet.type) {
-
-      error.textContent =
-        `Please select Pet ${i + 1}'s type.`;
+      alert(
+        'กรุณากรอกชื่อน้องให้ครบ'
+      );
 
       return false;
 
     }
 
+  }
 
-    if (!pet.service) {
 
-      error.textContent =
-        `Please select a service for Pet ${i + 1}.`;
+  state.hours =
+    calculateHours();
 
-      return false;
+  state.deposit =
+    calculateDeposit();
 
-    }
+
+  if (
+    !state.hours ||
+    !state.deposit
+  ) {
+
+    alert(
+      'ไม่สามารถคำนวณบริการได้'
+    );
+
+    return false;
 
   }
 
@@ -497,493 +814,196 @@ function validatePets() {
 }
 
 
-/* =====================================================
-   BOOKING ENGINE
-=====================================================
+/*************************************************
+ * STEP 2
+ *************************************************/
 
-   These calculations mirror the locked backend rules.
+function goToDate() {
 
-   Backend remains the final authority.
+  const owner =
+    ownerInput.value.trim();
 
-===================================================== */
-
-function calculateHours(pets) {
-
-  if (
-    pets.length === 1
-  ) {
-
-    return SERVICE_HOURS[
-      pets[0].service
-    ];
-
-  }
+  const phone =
+    phoneInput.value.trim();
 
 
-  const services =
-    pets.map(
-      pet => pet.service
+  if (!owner) {
+
+    alert(
+      'กรุณากรอกชื่อเจ้าของ'
     );
 
-
-  const baths =
-    services.filter(
-      service =>
-        service === 'bath'
-    ).length;
-
-
-  const grooming =
-    services.filter(
-      service =>
-        service === 'clip' ||
-        service === 'scissor'
-    ).length;
-
-
-  const haircutOnly =
-    services.filter(
-      service =>
-        service === 'haircut_only'
-    ).length;
-
-
-  const addons =
-    services.filter(
-      service =>
-        service === 'addon'
-    ).length;
-
-
-  /*
-   * 2 PET RULES
-   *
-   * Bath + Bath = 3
-   *
-   * Bath + Bath+Grooming = 4
-   *
-   * Bath+Grooming + Bath+Grooming = 4
-   *
-   * Haircut only + Bath = 3
-   *
-   * Addon + Bath = 2
-   *
-   * Addon + Addon = 1
-   *
-   * Haircut only + Haircut only = 3
-   */
-
-
-  if (
-    services.includes('bath') &&
-    (
-      services.includes('clip') ||
-      services.includes('scissor')
-    )
-  ) {
-
-    return 3;
-
-  }
-
-
-  if (
-    baths === 1 &&
-    haircutOnly === 1
-  ) {
-
-    return 3;
-
-  }
-
-
-  if (
-    baths === 1 &&
-    addons === 1
-  ) {
-
-    return 2;
-
-  }
-
-
-  if (
-    addons === 2
-  ) {
-
-    return 1;
-
-  }
-
-
-  if (
-    haircutOnly === 2
-  ) {
-
-    return 3;
-
-  }
-
-
-  if (
-    grooming === 2
-  ) {
-
-    return 4;
-
-  }
-
-
-  if (
-    baths === 2
-  ) {
-
-    return 3;
-
-  }
-
-
-  /*
-   * Fallback.
-   *
-   * Backend will still validate.
-   */
-
-  return services.reduce(
-    (
-      total,
-      service
-    ) => {
-
-      return (
-        total +
-        (
-          SERVICE_HOURS[service] || 1
-        )
-      );
-
-    },
-    0
-  );
-
-}
-
-
-/* =====================================================
-   DEPOSIT
-===================================================== */
-
-function calculateDeposit(pets) {
-
-  return pets.reduce(
-    (
-      total,
-      pet
-    ) => {
-
-      return (
-        total +
-        (
-          SERVICE_DEPOSIT[
-            pet.service
-          ] || 200
-        )
-      );
-
-    },
-    0
-  );
-
-}
-
-
-/* =====================================================
-   SUMMARY
-===================================================== */
-
-function updateBookingSummary() {
-
-  const pets =
-    readPetData();
-
-
-  if (
-    pets.length === 0
-  ) {
-
-    $('#bookingSummary')
-      .classList
-      .add('hidden');
+    ownerInput.focus();
 
     return;
 
   }
 
 
-  const hours =
-    calculateHours(pets);
+  if (!phone) {
 
+    alert(
+      'กรุณากรอกเบอร์โทรศัพท์'
+    );
 
-  const deposit =
-    calculateDeposit(pets);
-
-
-  state.pets =
-    pets;
-
-  state.hours =
-    hours;
-
-  state.deposit =
-    deposit;
-
-
-  $('#summaryHours')
-    .textContent =
-    `${hours} hour${hours > 1 ? 's' : ''}`;
-
-
-  $('#summaryDeposit')
-    .textContent =
-    formatTHB(deposit);
-
-
-  $('#bookingSummary')
-    .classList
-    .remove('hidden');
-
-}
-
-
-/* =====================================================
-   STEP 1 → STEP 2
-===================================================== */
-
-function goToDateStep() {
-
-  if (!validatePets()) {
+    phoneInput.focus();
 
     return;
 
   }
 
 
-  updateBookingSummary();
+  state.owner = owner;
+
+  state.phone = phone;
 
 
-  state.date = '';
-
-  state.time = '';
-
-
-  $('#bookingDate').value = '';
-
-  $('#slotGrid').innerHTML = '';
-
-  $('#noSlotsMessage')
-    .classList
-    .add('hidden');
-
-
-  $('#durationLabel')
-    .textContent =
-    `${state.hours} hour${state.hours > 1 ? 's' : ''}`;
-
-
-  showStep(2);
+  showStep(3);
 
 }
 
 
-/* =====================================================
-   DATE CHANGE
-===================================================== */
+/*************************************************
+ * DATE
+ *************************************************/
 
-async function handleDateChange() {
+function setMinimumDate() {
 
-  const date =
-    $('#bookingDate')
-      .value;
+  const now =
+    new Date();
 
+  const year =
+    now.getFullYear();
 
-  state.date =
-    date;
+  const month =
+    String(
+      now.getMonth() + 1
+    ).padStart(2, '0');
 
-
-  state.time =
-    '';
-
-
-  $('#step2Error')
-    .textContent = '';
-
-
-  $('#slotGrid')
-    .innerHTML = '';
+  const day =
+    String(
+      now.getDate()
+    ).padStart(2, '0');
 
 
-  $('#noSlotsMessage')
-    .classList
-    .add('hidden');
+  dateInput.min =
+    `${year}-${month}-${day}`;
+
+}
 
 
-  if (!date) {
+/*************************************************
+ * LOAD AVAILABLE TIMES
+ *************************************************/
 
+async function loadAvailableTimes() {
+
+  if (!state.date) {
     return;
-
   }
 
 
-  await loadAvailableSlots(
-    date,
-    state.hours
-  );
+  timeSlots.innerHTML = '';
 
-}
+  slotMessage.textContent = '';
 
-
-/* =====================================================
-   LOAD AVAILABLE SLOTS
-===================================================== */
-
-async function loadAvailableSlots(
-  date,
-  hours
-) {
-
-  const loading =
-    $('#loadingSlots');
+  loadingTimes.textContent =
+    'Checking...';
 
 
-  loading.classList
-    .remove('hidden');
+  nextPayment.disabled = true;
 
 
   try {
 
-    if (
-      !API_URL ||
-      API_URL.includes(
-        'PASTE_YOUR'
-      )
-    ) {
-
-      throw new Error(
-        'Booking API is not configured.'
-      );
-
-    }
-
-
     const url =
-      `${API_URL}?action=slots` +
-      `&date=${encodeURIComponent(date)}` +
-      `&hours=${encodeURIComponent(hours)}`;
+      API_URL +
+      '?action=slots' +
+      '&date=' +
+      encodeURIComponent(
+        state.date
+      ) +
+      '&hours=' +
+      encodeURIComponent(
+        state.hours
+      );
 
 
     const response =
-      await fetch(
-        url,
-        {
-          method: 'GET',
-          cache: 'no-store'
-        }
-      );
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        'Unable to check availability.'
-      );
-
-    }
+      await fetch(url);
 
 
     const data =
       await response.json();
 
 
-    if (!data.ok) {
+    if (
+      !data.ok
+    ) {
 
       throw new Error(
         data.message ||
-        'Unable to check availability.'
+        'Unable to load times'
       );
 
     }
 
 
-    state.availableSlots =
-      data.slots || {};
-
-
-    renderSlots(
-      state.availableSlots
+    renderAvailableTimes(
+      data.slots
     );
+
 
   } catch (error) {
 
     console.error(error);
 
-
-    $('#step2Error')
-      .textContent =
-      error.message ||
-      'Unable to load available times.';
-
+    slotMessage.textContent =
+      'ไม่สามารถโหลดเวลาว่างได้ กรุณาลองใหม่อีกครั้ง';
 
   } finally {
 
-    loading.classList
-      .add('hidden');
+    loadingTimes.textContent =
+      '';
 
   }
 
 }
 
 
-/* =====================================================
-   RENDER SLOTS
-===================================================== */
+/*************************************************
+ * RENDER TIMES
+ *************************************************/
 
-function renderSlots(slots) {
+function renderAvailableTimes(
+  slots
+) {
 
-  const grid =
-    $('#slotGrid');
-
-
-  grid.innerHTML = '';
-
+  timeSlots.innerHTML = '';
 
   const available =
     Object.keys(slots)
-      .filter(
-        time =>
-          slots[time] === true
-      );
+      .filter(function(time) {
+
+        return slots[time] === true;
+
+      });
 
 
   if (
     available.length === 0
   ) {
 
-    $('#noSlotsMessage')
-      .classList
-      .remove('hidden');
+    slotMessage.textContent =
+      'ไม่มีเวลาว่างสำหรับบริการที่เลือกในวันนี้';
 
     return;
 
   }
 
 
-  $('#noSlotsMessage')
-    .classList
-    .add('hidden');
-
-
   available.forEach(
-    time => {
+    function(time) {
 
       const button =
         document.createElement(
@@ -996,7 +1016,7 @@ function renderSlots(slots) {
 
 
       button.className =
-        'slot-button';
+        'time-button';
 
 
       button.textContent =
@@ -1005,14 +1025,18 @@ function renderSlots(slots) {
 
       button.addEventListener(
         'click',
-        () => selectSlot(
-          time,
-          button
-        )
+        function() {
+
+          selectTime(
+            time,
+            button
+          );
+
+        }
       );
 
 
-      grid.appendChild(
+      timeSlots.appendChild(
         button
       );
 
@@ -1022,306 +1046,124 @@ function renderSlots(slots) {
 }
 
 
-/* =====================================================
-   SELECT SLOT
-===================================================== */
+/*************************************************
+ * SELECT TIME
+ *************************************************/
 
-function selectSlot(
+function selectTime(
   time,
   button
 ) {
 
-  $$('.slot-button')
-    .forEach(
-      item => {
+  document
+    .querySelectorAll(
+      '.time-button'
+    )
+    .forEach(function(item) {
 
-        item.classList
-          .remove('selected');
+      item.classList.remove(
+        'selected'
+      );
 
-      }
-    );
+    });
 
 
-  button.classList
-    .add('selected');
+  button.classList.add(
+    'selected'
+  );
 
 
   state.time =
     time;
 
 
-  $('#step2Error')
-    .textContent = '';
+  nextPayment.disabled =
+    false;
 
 }
 
 
-/* =====================================================
-   STEP 2 → STEP 3
-===================================================== */
-
-function goToDetailsStep() {
-
-  const error =
-    $('#step2Error');
-
-
-  error.textContent = '';
-
-
-  if (!state.date) {
-
-    error.textContent =
-      'Please select a date.';
-
-    return;
-
-  }
-
-
-  if (!state.time) {
-
-    error.textContent =
-      'Please select an available time.';
-
-    return;
-
-  }
-
-
-  updateFinalReview();
-
-
-  showStep(3);
-
-}
-
-
-/* =====================================================
-   FINAL REVIEW
-===================================================== */
-
-function updateFinalReview() {
-
-  const container =
-    $('#finalPetSummary');
-
-
-  container.innerHTML = '';
-
-
-  state.pets.forEach(
-    pet => {
-
-      const row =
-        document.createElement(
-          'div'
-        );
-
-
-      row.className =
-        'review-pet';
-
-
-      const name =
-        document.createElement(
-          'strong'
-        );
-
-
-      name.textContent =
-        pet.name;
-
-
-      const service =
-        document.createElement(
-          'small'
-        );
-
-
-      service.textContent =
-        SERVICE_LABELS[
-          pet.service
-        ];
-
-
-      row.appendChild(
-        name
-      );
-
-
-      row.appendChild(
-        service
-      );
-
-
-      container.appendChild(
-        row
-      );
-
-    }
-  );
-
-
-  $('#finalDate')
-    .textContent =
-    formatDate(
-      state.date
-    );
-
-
-  $('#finalTime')
-    .textContent =
-    state.time;
-
-
-  $('#finalHours')
-    .textContent =
-    `${state.hours} hour${state.hours > 1 ? 's' : ''}`;
-
-
-  $('#finalDeposit')
-    .textContent =
-    formatTHB(
-      state.deposit
-    );
-
-}
-
-
-/* =====================================================
-   CUSTOMER VALIDATION
-===================================================== */
-
-function validateCustomer() {
-
-  const error =
-    $('#step3Error');
-
-
-  error.textContent = '';
-
-
-  const owner =
-    $('#ownerName')
-      .value
-      .trim();
-
-
-  const phone =
-    $('#ownerPhone')
-      .value
-      .trim();
-
-
-  if (!owner) {
-
-    error.textContent =
-      'Please enter your name.';
-
-    return false;
-
-  }
-
-
-  if (!phone) {
-
-    error.textContent =
-      'Please enter your phone number.';
-
-    return false;
-
-  }
-
+/*************************************************
+ * STEP 3 → 4
+ *************************************************/
+
+function goToPayment() {
 
   if (
-    phone.replace(
-      /\D/g,
-      ''
-    ).length < 8
+    !state.date ||
+    !state.time
   ) {
 
-    error.textContent =
-      'Please enter a valid phone number.';
-
-    return false;
-
-  }
-
-
-  state.owner =
-    owner;
-
-
-  state.phone =
-    phone;
-
-
-  return true;
-
-}
-
-
-/* =====================================================
-   SUBMIT
-===================================================== */
-
-async function handleSubmit(event) {
-
-  event.preventDefault();
-
-
-  if (
-    !validateCustomer()
-  ) {
+    alert(
+      'กรุณาเลือกวันและเวลา'
+    );
 
     return;
 
   }
 
 
-  const button =
-    $('#payDeposit');
+  renderFinalSummary();
+
+  showStep(4);
+
+}
 
 
-  button.disabled =
+/*************************************************
+ * CREATE CHECKOUT
+ *************************************************/
+
+async function createCheckout() {
+
+  payDeposit.disabled =
     true;
 
 
-  button.textContent =
+  payDeposit.textContent =
     'Preparing payment...';
 
 
+  const errorBox =
+    document.getElementById(
+      'checkout-error'
+    );
+
+
+  errorBox.textContent =
+    '';
+
+
+  const payload = {
+
+    action:
+      'createCheckout',
+
+    owner:
+      state.owner,
+
+    phone:
+      state.phone,
+
+    date:
+      state.date,
+
+    time:
+      state.time,
+
+    hours:
+      state.hours,
+
+    deposit:
+      state.deposit,
+
+    pets:
+      state.pets
+
+  };
+
+
   try {
-
-    const payload = {
-
-      action:
-        'createCheckout',
-
-      owner:
-        state.owner,
-
-      phone:
-        state.phone,
-
-      date:
-        state.date,
-
-      time:
-        state.time,
-
-      hours:
-        state.hours,
-
-      deposit:
-        state.deposit,
-
-      pets:
-        state.pets
-
-    };
-
 
     const response =
       await fetch(
@@ -1336,30 +1178,25 @@ async function handleSubmit(event) {
           },
 
           body:
-            JSON.stringify(payload)
+            JSON.stringify(
+              payload
+            )
 
         }
       );
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        'Unable to create payment.'
-      );
-
-    }
 
 
     const data =
       await response.json();
 
 
-    if (!data.ok) {
+    if (
+      !data.ok
+    ) {
 
       throw new Error(
         data.message ||
-        'Unable to create payment.'
+        'ไม่สามารถสร้างการชำระเงินได้'
       );
 
     }
@@ -1370,19 +1207,11 @@ async function handleSubmit(event) {
     ) {
 
       throw new Error(
-        'Stripe checkout URL was not returned.'
+        'Stripe checkout URL ไม่ถูกต้อง'
       );
 
     }
 
-
-    state.bookingId =
-      data.bookingId;
-
-
-    /*
-     * Stripe redirect
-     */
 
     window.location.href =
       data.checkoutUrl;
@@ -1392,30 +1221,28 @@ async function handleSubmit(event) {
 
     console.error(error);
 
-
-    $('#step3Error')
-      .textContent =
+    errorBox.textContent =
       error.message ||
-      'Something went wrong. Please try again.';
+      'เกิดข้อผิดพลาด กรุณาลองใหม่';
 
 
-    button.disabled =
+    payDeposit.disabled =
       false;
 
 
-    button.textContent =
-      'Continue to payment';
+    payDeposit.textContent =
+      'Pay deposit';
 
   }
 
 }
 
 
-/* =====================================================
-   STRIPE RETURN
-===================================================== */
+/*************************************************
+ * PAYMENT RETURN
+ *************************************************/
 
-async function handleReturnFromStripe() {
+async function handlePaymentReturn() {
 
   const params =
     new URLSearchParams(
@@ -1426,28 +1253,26 @@ async function handleReturnFromStripe() {
   const paid =
     params.get('paid');
 
-
   const cancelled =
     params.get('cancelled');
-
 
   const sessionId =
     params.get('session_id');
 
 
-  const bookingId =
-    params.get('booking_id');
-
-
   if (
-    paid === '1' &&
-    sessionId
+    cancelled === '1'
   ) {
 
-    await confirmPayment(
-      sessionId,
-      bookingId
-    );
+    hideAllMainSteps();
+
+    document
+      .getElementById(
+        'cancelled'
+      )
+      .classList.add(
+        'active'
+      );
 
     return;
 
@@ -1455,227 +1280,344 @@ async function handleReturnFromStripe() {
 
 
   if (
-    cancelled === '1'
+    paid === '1' &&
+    sessionId
   ) {
 
-    showCancelled();
-
-  }
-
-}
+    hideAllMainSteps();
 
 
-/* =====================================================
-   CONFIRM PAYMENT
-===================================================== */
-
-async function confirmPayment(
-  sessionId,
-  bookingId
-) {
-
-  showStep(4);
-
-
-  $('#paymentLoading')
-    .textContent =
-    'Confirming your payment...';
-
-
-  try {
-
-    const url =
-      `${API_URL}` +
-      `?action=confirmCheckout` +
-      `&session_id=${encodeURIComponent(sessionId)}`;
-
-
-    const response =
-      await fetch(
-        url,
-        {
-          method: 'GET',
-          cache: 'no-store'
-        }
+    const success =
+      document.getElementById(
+        'success'
       );
 
 
-    if (!response.ok) {
-
-      throw new Error(
-        'Unable to confirm payment.'
-      );
-
-    }
-
-
-    const data =
-      await response.json();
-
-
-    if (
-      !data.ok ||
-      !data.paid
-    ) {
-
-      throw new Error(
-        data.message ||
-        'Payment has not been confirmed.'
-      );
-
-    }
-
-
-    showSuccess(
-      data.bookingId ||
-      bookingId
+    success.classList.add(
+      'active'
     );
 
 
-  } catch (error) {
+    try {
 
-    console.error(error);
-
-
-    $('#paymentLoading')
-      .textContent =
-      'Payment was received, but confirmation is still being processed. Please contact Lunessa if needed.';
-
-  }
-
-}
-
-
-/* =====================================================
-   SUCCESS
-===================================================== */
-
-function showSuccess(
-  bookingId
-) {
-
-  $('#bookingForm')
-    .classList
-    .add('hidden');
+      const response =
+        await fetch(
+          API_URL +
+          '?action=confirmCheckout' +
+          '&session_id=' +
+          encodeURIComponent(
+            sessionId
+          )
+        );
 
 
-  $('.progress')
-    .classList
-    .add('hidden');
+      const data =
+        await response.json();
 
 
-  $('.booking-intro')
-    .classList
-    .add('hidden');
+      if (
+        data.ok &&
+        data.paid
+      ) {
 
+        document
+          .getElementById(
+            'success-details'
+          )
+          .innerHTML = `
 
-  $('#successState')
-    .classList
-    .remove('hidden');
+            <div>
+              <span>Booking ID</span>
+              <strong>
+                ${escapeHtml(
+                  data.bookingId || ''
+                )}
+              </strong>
+            </div>
 
+          `;
 
-  $('#confirmationBookingId')
-    .textContent =
-    bookingId || '—';
+      } else {
 
+        success.querySelector(
+          'h2'
+        ).textContent =
+          'Payment is being verified';
 
-  clearBookingQuery();
-
-}
-
-
-/* =====================================================
-   CANCELLED
-===================================================== */
-
-function showCancelled() {
-
-  $('#bookingForm')
-    .classList
-    .add('hidden');
-
-
-  $('.progress')
-    .classList
-    .add('hidden');
-
-
-  $('.booking-intro')
-    .classList
-    .add('hidden');
-
-
-  $('#cancelledState')
-    .classList
-    .remove('hidden');
-
-}
-
-
-/* =====================================================
-   RESET
-===================================================== */
-
-function resetBooking() {
-
-  window.location.href =
-    window.location.pathname;
-
-}
-
-
-/* =====================================================
-   STEP NAVIGATION
-===================================================== */
-
-function showStep(
-  step
-) {
-
-  state.step =
-    step;
-
-
-  $$('.booking-step')
-    .forEach(
-      section => {
-
-        section.classList
-          .remove('active');
+        success.querySelector(
+          'p'
+        ).textContent =
+          'Your payment was received and your booking is being confirmed.';
 
       }
+
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  }
+
+}
+
+
+/*************************************************
+ * RENDER SUMMARIES
+ *************************************************/
+
+function renderDetailsSummary() {
+
+  const container =
+    document.getElementById(
+      'details-summary'
     );
+
+
+  container.innerHTML =
+    state.pets
+      .map(function(pet) {
+
+        return `
+          <div class="summary-row">
+
+            <span>
+              ${escapeHtml(
+                pet.name
+              )}
+            </span>
+
+            <strong>
+              ${escapeHtml(
+                SERVICES[
+                  pet.service
+                ].label
+              )}
+            </strong>
+
+          </div>
+        `;
+
+      })
+      .join('') +
+
+      `
+        <div class="summary-total">
+
+          <span>
+            Total time
+          </span>
+
+          <strong>
+            ${state.hours}
+            ${
+              state.hours === 1
+                ? 'hour'
+                : 'hours'
+            }
+          </strong>
+
+        </div>
+
+        <div class="summary-total">
+
+          <span>
+            Deposit
+          </span>
+
+          <strong>
+            ${formatMoney(
+              state.deposit
+            )}
+          </strong>
+
+        </div>
+      `;
+
+}
+
+
+function renderFinalSummary() {
+
+  const container =
+    document.getElementById(
+      'final-summary'
+    );
+
+
+  container.innerHTML = `
+
+    <div class="final-row">
+
+      <span>Owner</span>
+
+      <strong>
+        ${escapeHtml(
+          state.owner
+        )}
+      </strong>
+
+    </div>
+
+
+    <div class="final-row">
+
+      <span>Phone</span>
+
+      <strong>
+        ${escapeHtml(
+          state.phone
+        )}
+      </strong>
+
+    </div>
+
+
+    <div class="final-row">
+
+      <span>Date</span>
+
+      <strong>
+        ${formatDate(
+          state.date
+        )}
+      </strong>
+
+    </div>
+
+
+    <div class="final-row">
+
+      <span>Time</span>
+
+      <strong>
+        ${state.time}
+      </strong>
+
+    </div>
+
+
+    <div class="final-row">
+
+      <span>Duration</span>
+
+      <strong>
+        ${state.hours}
+        ${
+          state.hours === 1
+            ? 'hour'
+            : 'hours'
+        }
+      </strong>
+
+    </div>
+
+
+    <div class="final-pets">
+
+      ${
+        state.pets
+          .map(function(pet) {
+
+            return `
+              <div>
+
+                <strong>
+                  ${escapeHtml(
+                    pet.name
+                  )}
+                </strong>
+
+                <span>
+                  ${escapeHtml(
+                    SERVICES[
+                      pet.service
+                    ].label
+                  )}
+                </span>
+
+              </div>
+            `;
+
+          })
+          .join('')
+      }
+
+    </div>
+
+
+    <div class="final-deposit">
+
+      <span>
+        Deposit
+      </span>
+
+      <strong>
+        ${formatMoney(
+          state.deposit
+        )}
+      </strong>
+
+    </div>
+
+  `;
+
+}
+
+
+/*************************************************
+ * STEPS
+ *************************************************/
+
+function showStep(step) {
+
+  document
+    .querySelectorAll(
+      '.step'
+    )
+    .forEach(function(section) {
+
+      section.classList.remove(
+        'active'
+      );
+
+    });
 
 
   const target =
-    $(`#step${step}`);
+    document.getElementById(
+      'step' + step
+    );
 
 
   if (target) {
 
-    target.classList
-      .add('active');
+    target.classList.add(
+      'active'
+    );
 
   }
 
 
-  $$('.progress-step')
-    .forEach(
-      item => {
+  document
+    .querySelectorAll(
+      '.progress-step'
+    )
+    .forEach(function(item) {
 
-        const number =
-          Number(
-            item.dataset.step
-          );
-
-
-        item.classList.toggle(
-          'active',
-          number <= step
+      const number =
+        Number(
+          item.dataset.step
         );
 
-      }
-    );
+
+      item.classList.toggle(
+        'active',
+        number <= step
+      );
+
+    });
 
 
   window.scrollTo({
@@ -1686,17 +1628,34 @@ function showStep(
 }
 
 
-/* =====================================================
-   FORMAT
-===================================================== */
+function hideAllMainSteps() {
 
-function formatTHB(
-  amount
+  document
+    .querySelectorAll(
+      '.step'
+    )
+    .forEach(function(section) {
+
+      section.classList.remove(
+        'active'
+      );
+
+    });
+
+}
+
+
+/*************************************************
+ * HELPERS
+ *************************************************/
+
+function formatMoney(
+  value
 ) {
 
   return (
     '฿' +
-    Number(amount || 0)
+    Number(value || 0)
       .toLocaleString(
         'en-US'
       )
@@ -1706,59 +1665,64 @@ function formatTHB(
 
 
 function formatDate(
-  dateString
+  value
 ) {
 
-  if (!dateString) {
-
-    return '—';
-
+  if (!value) {
+    return '';
   }
 
 
   const parts =
-    dateString.split('-');
+    value.split('-');
 
 
   if (
     parts.length !== 3
   ) {
 
-    return dateString;
+    return value;
 
   }
 
 
-  const [
-    year,
-    month,
-    day
-  ] = parts;
-
-
-  return `${day}/${month}/${year}`;
+  return (
+    parts[2] +
+    '/' +
+    parts[1] +
+    '/' +
+    parts[0]
+  );
 
 }
 
 
-/* =====================================================
-   CLEAR URL
-===================================================== */
+function escapeHtml(
+  value
+) {
 
-function clearBookingQuery() {
-
-  try {
-
-    window.history.replaceState(
-      {},
-      document.title,
-      window.location.pathname
+  return String(
+    value || ''
+  )
+    .replace(
+      /&/g,
+      '&amp;'
+    )
+    .replace(
+      /</g,
+      '&lt;'
+    )
+    .replace(
+      />/g,
+      '&gt;'
+    )
+    .replace(
+      /"/g,
+      '&quot;'
+    )
+    .replace(
+      /'/g,
+      '&#039;'
     );
-
-  } catch (error) {
-
-    console.log(error);
-
-  }
 
 }
