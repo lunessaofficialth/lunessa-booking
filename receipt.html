@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Lunessa Receipt</title><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet"/><style>body{margin:0;background:#F3EEE7;color:#1A1714;font-family:Sarabun,sans-serif}.paper{max-width:520px;margin:24px auto;background:#FFFCF8;border:1px solid #E6DED4;border-radius:22px;padding:24px}h1{color:#3E4F44;letter-spacing:.16em;font-size:22px}p{line-height:1.6}.muted{color:#6d655e}</style></head><body><div class="paper" id="paper">กำลังโหลดใบเสร็จ...</div><script>
+const SHEET='16aGhjPvcEsrw1NAc9qULkE3B4RuroBe9kRK-oIc1ZVg';
+const id=new URLSearchParams(location.search).get('id')||'';
+function cols(line){return line.split(',').map(x=>x.replace(/^"|"$/g,''));}
+fetch('https://docs.google.com/spreadsheets/d/'+SHEET+'/gviz/tq?tqx=out:csv&sheet=WEB_BOOKINGS').then(r=>r.text()).then(text=>{
+  const rows=text.trim().split(/\n/).map(cols);
+  const head=rows[0];
+  const row=rows.slice(1).find(r=>r[0]===id);
+  const paper=document.getElementById('paper');
+  if(!row){paper.innerHTML='<h1>LUNESSA</h1><p>ไม่พบรหัสจอง '+id+'</p>';return;}
+  const get=name=>{const i=head.indexOf(name);return i<0?'':row[i];};
+  paper.innerHTML='<h1>LUNESSA</h1><p class="muted">Pet Boutique · ใบเสร็จรับบริการ</p><p>รหัส '+id+'</p><p>เจ้าของ '+get('owner')+'<br>เบอร์ '+get('phone')+'</p><p>วัน '+get('date')+' เวลา '+get('time')+'<br>ชั่วโมง '+get('hours')+'</p><p>น้องและบริการ<br>'+(get('pets_json')||get('note')||'-')+'</p><p>มัดจำ ฿'+get('deposit')+'<br>สถานะ '+get('status')+'</p><p class="muted">น้ำหนัก ราคาจริง และข้อสังเกตหลังบริการ ช่างจะเติมในชีตหลังทำบริการ</p>';
+});
+</script></body></html>
