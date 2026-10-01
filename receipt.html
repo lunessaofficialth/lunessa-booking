@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="th"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Lunessa Receipt</title><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet"/><style>body{margin:0;background:#F3EEE7;color:#1A1714;font-family:Sarabun,sans-serif}.paper{max-width:520px;margin:24px auto;background:#FFFCF8;border:1px solid #E6DED4;border-radius:22px;padding:24px}h1{color:#3E4F44;letter-spacing:.16em;font-size:22px}p{line-height:1.6}.muted{color:#6d655e}.price{font-size:28px;font-weight:700;color:#3E4F44}</style></head><body><div class="paper" id="paper">กำลังโหลดใบเสร็จ...</div><script>
+<html lang="th"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Lunessa Receipt</title><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet"/><style>body{margin:0;background:#F3EEE7;color:#1A1714;font-family:Sarabun,sans-serif}.paper{max-width:520px;margin:24px auto;background:#FFFCF8;border:1px solid #E6DED4;border-radius:22px;padding:24px}h1{color:#3E4F44;letter-spacing:.16em;font-size:22px}.pet{border-top:1px solid #E6DED4;margin-top:12px;padding-top:8px}.price{font-size:28px;font-weight:700;color:#3E4F44}.muted{color:#6d655e}</style></head><body><div class="paper" id="paper">กำลังโหลดใบเสร็จ...</div><script>
 const SHEET='16aGhjPvcEsrw1NAc9qULkE3B4RuroBe9kRK-oIc1ZVg';
 const id=new URLSearchParams(location.search).get('id')||'';
-function cols(line){return line.split(',').map(x=>x.replace(/^"|"$/g,''));}
+function parseCsv(text){const rows=[];let row=[],cur='',q=false;for(let i=0;i<text.length;i++){const c=text[i];if(q){if(c==='"'&&text[i+1]==='"'){cur+='"';i++;}else if(c==='"'){q=false;}else cur+=c;}else if(c==='"'){q=true;}else if(c===','){row.push(cur);cur='';}else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur='';}else if(c!=='\r'){cur+=c;}}if(cur||row.length){row.push(cur);rows.push(row);}return rows;}
 fetch('https://docs.google.com/spreadsheets/d/'+SHEET+'/gviz/tq?tqx=out:csv&sheet=WEB_BOOKINGS').then(r=>r.text()).then(text=>{
-  const rows=text.trim().split(/\n/).map(cols);
-  const head=rows[0];
-  const row=rows.slice(1).find(r=>r[0]===id);
-  const paper=document.getElementById('paper');
-  if(!row){paper.innerHTML='<h1>LUNESSA</h1><p>ไม่พบรหัสจอง '+id+'</p>';return;}
-  const get=name=>{const i=head.indexOf(name);return i<0?'':row[i];};
-  paper.innerHTML='<h1>LUNESSA</h1><p class="muted">Pet Boutique · ใบเสร็จรับบริการ</p><p>รหัส '+id+'<br>'+get('date')+' '+get('time')+'</p><p>เจ้าของ '+get('owner')+'<br>น้อง '+(get('pets_json')||'-')+'</p><p>น้ำหนัก '+(get('receipt_weight')||'-')+' กก.</p><p>สิ่งที่เจอ<br>'+(get('receipt_note')||get('note')||'-')+'</p><p class="price">ราคา ฿'+(get('receipt_price')||'-')+'</p><p class="muted">มัดจำ ฿'+get('deposit')+' · '+get('status')+'</p>';
+  const all=parseCsv(text);const head=all[0];const rec=all.slice(1).find(r=>r[0]===id);const paper=document.getElementById('paper');
+  if(!rec){paper.innerHTML='<h1>LUNESSA</h1><p>ไม่พบรหัสจอง '+id+'</p>';return;}
+  const get=name=>{const i=head.indexOf(name);return i<0?'':rec[i];};
+  let pets=[];try{pets=JSON.parse(get('receipt_note')||'[]');}catch(e){pets=[];}
+  if(!Array.isArray(pets)||!pets.length||!pets[0]||!pets[0].name){paper.innerHTML='<h1>LUNESSA</h1><p>'+id+'</p><p>'+get('owner')+'</p><p>'+(get('receipt_note')||get('note')||'ยังไม่มีรายละเอียดหลังบริการ')+'</p>';return;}
+  const total=pets.reduce((s,p)=>s+(Number(p.price)||0),0);
+  paper.innerHTML='<h1>LUNESSA</h1><p class="muted">Pet Boutique · ใบเสร็จรับบริการ</p><p>รหัส '+id+'<br>'+get('date')+' '+get('time')+'<br>เจ้าของ '+get('owner')+'</p>'+pets.map(p=>'<div class="pet"><strong>'+p.name+'</strong><p>น้ำหนัก '+(p.weight||'-')+' กก.<br>ราคา ฿'+(p.price||'-')+'<br>'+(p.note||'-')+'</p></div>').join('')+'<p class="price">รวม ฿'+total+'</p><p class="muted">มัดจำ ฿'+get('deposit')+'</p>';
 });
 </script></body></html>
