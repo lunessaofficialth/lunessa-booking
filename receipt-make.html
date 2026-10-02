@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lunessa ใบเสร็จ</title><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet"><style>:root{--ivory:#F3EEE7;--ink:#1A1714;--sage:#3E4F44;--card:#FFFCF8;--line:#E6DED4}*{box-sizing:border-box}body{margin:0;background:var(--ivory);color:var(--ink);font-family:Sarabun,sans-serif}.wrap{max-width:640px;margin:0 auto;padding:20px 14px 70px}h1{color:var(--sage);margin:8px 0}label{display:block;font-size:13px;margin:8px 0 4px}input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:12px;font:inherit;background:#fff}textarea{min-height:64px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin:10px 0}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}button{border:0;background:var(--sage);color:#fff;border-radius:999px;padding:12px 16px;font:inherit;font-weight:700}.ghost{background:#fff;color:var(--sage);border:1px solid var(--line)}img.out{width:100%;border-radius:16px;margin-top:12px}</style></head><body><div class="wrap"><h1>ใบเสร็จหลังบริการ</h1><p>กรอกหลังทำบริการ ได้รูปส่งไลน์ สูงสุด 5 ตัว</p><div class="card"><div class="row"><div><label>วันที่รับบริการ</label><input id="date" type="date"></div><div><label>เบอร์เจ้าของ</label><input id="phone" placeholder="0659792863"></div></div><label>ชื่อเจ้าของ</label><input id="owner"><label>สลิปรับเงิน</label><input id="slip" type="file" accept="image/*"></div><div id="pets"></div><button class="ghost" id="add" type="button">เพิ่มน้อง</button><div class="card"><button id="make" type="button">สร้างรูปใบเสร็จ</button><p id="msg"></p><img id="preview" class="out" alt=""><a id="down" class="ghost" style="display:none;margin-top:8px">ดาวน์โหลดรูป</a></div></div><script>
+const API='https://script.google.com/macros/s/AKfycbyOM3MfkwLwBf0RkPlAoKzfa_1EbX2yjPyVP54G-YNUspcjVT9zm82VegNvMyvvbXt5/exec';
+const REVIEW='https://maps.app.goo.gl/d1iWtFBwY7yw5zRz6';
+let n=1;
+function petCard(i){return '<div class="card" data-pet="'+i+'"><strong>น้องตัวที่ '+i+'</strong><label>ชื่อน้อง</label><input data-f="name"><div class="row"><div><label>ประเภท</label><select data-f="type"><option value="หมา">หมา</option><option value="แมว">แมว</option></select></div><div><label>ลักษณะขน</label><select data-f="coat"><option>ขนสั้น</option><option>ขนปานกลาง</option><option>ขนยาว</option></select></div></div><div class="row"><div><label>น้ำหนัก (กก.)</label><input data-f="weight" inputmode="decimal"></div><div><label>รับบริการ</label><select data-f="service"><option>อาบน้ำอย่างเดียว</option><option>อาบน้ำ + ไถขน</option><option>อาบน้ำ + ตัดขนงานกรรไกร</option><option>ตัดขนอย่างเดียว</option><option>บริการเสริม</option></select></div></div><div class="row"><div><label>มัดจำ</label><input data-f="deposit" inputmode="numeric" value="0"></div><div><label>ชำระเพิ่ม</label><input data-f="extra" inputmode="numeric" value="0"></div></div><label>โน้ต ถ้ามีอะไรแจ้ง</label><textarea data-f="note" placeholder="ไม่มี / พบรอยแดงที่ท้อง"></textarea></div>';}
+function render(){document.getElementById('pets').innerHTML=Array.from({length:n},(_,i)=>petCard(i+1)).join('');}
+document.getElementById('add').onclick=()=>{if(n<5){n++;render();}};
+document.getElementById('date').value=new Date().toISOString().slice(0,10);
+function val(card,f){return card.querySelector('[data-f="'+f+'"]').value.trim();}
+function wrap(ctx,text,x,y,max,lh){const words=text.split(' ');let line='';let yy=y;const parts=text.split('\n');parts.forEach(part=>{ctx.fillText(part,x,yy);yy+=lh;});return yy;}
+async function make(){
+  const owner=document.getElementById('owner').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const date=document.getElementById('date').value;
+  const cards=[...document.querySelectorAll('[data-pet]')];
+  const pets=cards.map(c=>({name:val(c,'name'),type:val(c,'type'),coat:val(c,'coat'),weight:val(c,'weight'),service:val(c,'service'),deposit:Number(val(c,'deposit')||0),extra:Number(val(c,'extra')||0),note:val(c,'note')||'ไม่มี'})).filter(p=>p.name);
+  if(!pets.length){document.getElementById('msg').textContent='ยังไม่มีชื่อน้อง';return;}
+  const total=pets.reduce((s,p)=>s+p.deposit+p.extra,0);
+  const extra=pets.reduce((s,p)=>s+p.extra,0);
+  const slipFile=document.getElementById('slip').files[0];
+  const slip=slipFile?await loadImg(slipFile):null;
+  const canvas=document.createElement('canvas');
+  canvas.width=900;
+  const base=520+pets.length*210+(slip?420:0);
+  canvas.height=base;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#F3EEE7';ctx.fillRect(0,0,900,canvas.height);
+  ctx.fillStyle='#3E4F44';ctx.font='700 42px Sarabun,sans-serif';ctx.fillText('LUNESSA',48,78);
+  ctx.font='400 18px Sarabun,sans-serif';ctx.fillText('PET BOUTIQUE',48,106);
+  ctx.fillStyle='#1A1714';ctx.font='700 32px Sarabun,sans-serif';ctx.fillText('ขอบคุณที่ใช้บริการ',48,168);
+  ctx.font='400 22px Sarabun,sans-serif';ctx.fillText(date+'  ·  '+owner+'  ·  '+phone,48,206);
+  let y=250;
+  pets.forEach(p=>{
+    ctx.fillStyle='#FFFCF8';ctx.fillRect(36,y,828,190);ctx.strokeStyle='#E6DED4';ctx.strokeRect(36,y,828,190);
+    ctx.fillStyle='#3E4F44';ctx.font='700 28px Sarabun,sans-serif';ctx.fillText(p.name,56,y+40);
+    ctx.fillStyle='#1A1714';ctx.font='400 22px Sarabun,sans-serif';
+    ctx.fillText(p.type+' · '+p.coat+' · '+p.weight+' กก.',56,y+76);
+    ctx.fillText(p.service,56,y+108);
+    ctx.fillText('มัดจำ ฿'+p.deposit+'    ชำระเพิ่ม ฿'+p.extra,56,y+140);
+    ctx.fillText(p.note,56,y+172);
+    y+=210;
+  });
+  ctx.fillStyle='#3E4F44';ctx.font='700 32px Sarabun,sans-serif';ctx.fillText('ชำระเพิ่มวันนี้ ฿'+extra+'    ยอดรวม ฿'+total,48,y+20);
+  y+=70;
+  if(slip){ctx.drawImage(slip,48,y,360,320);y+=350;}
+  ctx.fillStyle='#1A1714';ctx.font='400 22px Sarabun,sans-serif';
+  ctx.fillText('หากพอใจ เขียนรีวิวให้ช่างได้ที่',48,y);
+  ctx.fillText(REVIEW,48,y+34);
+  const url=canvas.toDataURL('image/png');
+  document.getElementById('preview').src=url;
+  const a=document.getElementById('down');a.href=url;a.download='lunessa-receipt.png';a.style.display='inline-flex';
+  document.getElementById('msg').textContent='ดาวน์โหลดรูปแล้วส่งในไลน์ กำลังบันทึกลงชีต';
+  fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'saveVisit',date,owner,phone,pets,total,extra,review:REVIEW})});
+}
+function loadImg(file){return new Promise(res=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>res(im);im.src=r.result;};r.readAsDataURL(file);});}
+document.getElementById('make').onclick=make;render();
+</script></body></html>
