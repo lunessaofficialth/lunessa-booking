@@ -13,6 +13,7 @@ function thaiDate(iso){const p=String(iso||'').split('-');if(p.length<3)return i
 function row(ctx,label,value,x,y,right){ctx.fillStyle='#8a8178';ctx.font='400 22px Sarabun,sans-serif';ctx.textAlign='left';ctx.fillText(label,x,y);ctx.fillStyle='#1A1714';ctx.font='700 24px Sarabun,sans-serif';ctx.textAlign='right';ctx.fillText(value,right,y);ctx.textAlign='left';}
 function loadImg(src){return new Promise(res=>{const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src=src;});}
 function round(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function fit(img,maxW){const r=img.naturalHeight/img.naturalWidth;return {w:maxW,h:Math.round(maxW*r)};}
 async function make(){
   await document.fonts.ready;
   const owner=document.getElementById('owner').value.trim()||'-';
@@ -25,15 +26,17 @@ async function make(){
   const slip=slipFile?await loadImg(URL.createObjectURL(slipFile)):null;
   const logo=await loadImg('images/lunessa-logo.png');
   const qr=await loadImg('images/promptpay.png');
+  const qrBox=qr?fit(qr,280):{w:0,h:0};
+  const slipBox=slip?fit(slip,280):{w:0,h:0};
   const W=900,side=64;
-  const petH=pets.reduce((s,p)=>s+(p.note?250:210),0);
-  const H=520+petH+230+430+(slip?300:0)+180;
+  const petH=pets.reduce((s,p)=>s+(p.note?252:212),0);
+  const H=560+petH+220+qrBox.h+80+slipBox.h+(slip?40:0)+160;
   const canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
   const ctx=canvas.getContext('2d');
   ctx.fillStyle='#F7F3ED';ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#FFFCF8';round(ctx,24,24,W-48,H-48,28);ctx.fill();
   let y=48;
-  if(logo){ctx.drawImage(logo,(W-110)/2,y,110,110);y+=120;}
+  if(logo){const lb=fit(logo,110);ctx.drawImage(logo,(W-lb.w)/2,y,lb.w,lb.h);y+=lb.h+12;}
   ctx.fillStyle='#3E4F44';ctx.textAlign='center';ctx.font='700 52px Sarabun,sans-serif';ctx.fillText('LUNESSA',W/2,y+46);
   ctx.font='400 18px Sarabun,sans-serif';ctx.fillStyle='#8a8178';ctx.fillText('P E T  B O U T I Q U E',W/2,y+76);
   ctx.strokeStyle='#E6DED4';ctx.beginPath();ctx.moveTo(side,y+98);ctx.lineTo(W-side,y+98);ctx.stroke();
@@ -56,13 +59,13 @@ async function make(){
     if(p.note){ctx.fillStyle='#6d655e';ctx.font='400 20px Sarabun,sans-serif';ctx.textAlign='left';ctx.fillText(p.note,side+22,y+222);}
     y+=h+16;
   });
-  const boxX=side,boxW=W-side*2,boxH=168;
-  ctx.fillStyle='#3E4F44';round(ctx,boxX,y,boxW,boxH,18);ctx.fill();
+  const boxH=168;
+  ctx.fillStyle='#3E4F44';round(ctx,side,y,W-side*2,boxH,18);ctx.fill();
   ctx.fillStyle='#F3EEE7';ctx.textAlign='center';ctx.font='400 22px Sarabun,sans-serif';ctx.fillText('ยอดชำระเพิ่มวันนี้',W/2,y+48);
   ctx.fillStyle='#ffffff';ctx.font='700 58px Sarabun,sans-serif';ctx.fillText(baht(due),W/2,y+112);
   y+=boxH+28;
-  if(qr){ctx.textAlign='center';ctx.fillStyle='#3E4F44';ctx.font='400 20px Sarabun,sans-serif';ctx.fillText('สแกนชำระยอดนี้',W/2,y+8);ctx.drawImage(qr,(W-280)/2,y+24,280,280);y+=330;}
-  if(slip){ctx.drawImage(slip,side,y,260,200);y+=220;}
+  if(qr){ctx.textAlign='center';ctx.fillStyle='#3E4F44';ctx.font='400 20px Sarabun,sans-serif';ctx.fillText('สแกนชำระยอดนี้',W/2,y+8);ctx.drawImage(qr,(W-qrBox.w)/2,y+24,qrBox.w,qrBox.h);y+=qrBox.h+48;}
+  if(slip){ctx.drawImage(slip,(W-slipBox.w)/2,y,slipBox.w,slipBox.h);y+=slipBox.h+28;}
   ctx.textAlign='center';ctx.fillStyle='#3E4F44';ctx.font='700 26px Sarabun,sans-serif';ctx.fillText('Every Little One Deserves Gentle Care.',W/2,y+10);
   ctx.fillStyle='#6d655e';ctx.font='400 20px Sarabun,sans-serif';ctx.fillText('หากประทับใจในบริการ ฝากรีวิวให้ Lunessa ได้เลยนะคะ',W/2,y+46);
   ctx.fillStyle='#3E4F44';ctx.font='400 16px Sarabun,sans-serif';ctx.fillText('LUNESSA PET BOUTIQUE  ·  Gentle Touch, Forever Care',W/2,y+82);
