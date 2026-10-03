@@ -1,37 +1,5 @@
-function overlaps(start, hours, booking) {
-  var end = start + hours;
-  var busyEnd = booking.start + booking.hours;
-  return start < busyEnd && end > booking.start;
-}
-function draw() {
-  var t = T();
-  var dateEl = document.getElementById('date');
-  var box = document.getElementById('slots');
-  var note = document.getElementById('dayNote');
-  var need = plan().h;
-  if (!dateEl || !box) return;
-  box.innerHTML = '';
-  if (note) note.textContent = '';
-  if (CLOSED.includes(dateEl.value)) {
-    if (note) note.textContent = t.closed;
-    chosen = '';
-    return;
-  }
-  var last = need <= 2 ? 19 : need === 3 ? 18 : 17;
-  var busy = TAKEN.filter(function (x) { return x.date === dateEl.value; });
-  if (note && busy.length) {
-    note.textContent = t.busy + ' ' + busy.map(function (b) {
-      return pad(b.start) + ':00-' + pad(b.start + b.hours) + ':00';
-    }).join(', ');
-  }
-  ['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'].forEach(function (time) {
-    var s = +time.slice(0, 2);
-    var b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = time;
-    b.disabled = s > last || past(s) || busy.some(function (x) { return overlaps(s, need, x); });
-    b.className = chosen === time ? 'on' : '';
-    b.onclick = function () { chosen = time; draw(); };
-    box.appendChild(b);
-  });
-}
+function hours(a,b){if(!b){if(a==='addon')return .5;if(a==='bath')return 1.5;return a==='cut'?2:3}const x=[a,b].slice().sort();const key=x.join('+');const pair={'addon+addon':1,'addon+bath':2,'addon+cut':2.5,'addon+clip':3.5,'addon+scissor':3.5,'bath+bath':2.5,'bath+cut':2.5,'bath+clip':3.5,'bath+scissor':3.5,'cut+cut':3,'clip+cut':4,'cut+scissor':4,'clip+clip':4,'clip+scissor':4,'scissor+scissor':4};return pair[key]||4}
+function hour(v){const m=String(v||'').match(/(\d{1,2}):(\d{2})/);return m?+m[1]+(+m[2]/60):0}
+function past(s){const d=document.getElementById('date');if(!d||d.value!==today())return false;const n=now();return s<n.getHours()+n.getMinutes()/60}
+function hm(n){const h=Math.floor(n+0.001),m=Math.round((n-h)*60);return pad(h)+':'+(m>=30?'30':'00')}
+function draw(){const t=T(),dateEl=document.getElementById('date'),box=document.getElementById('slots'),note=document.getElementById('dayNote');if(!dateEl||!box)return;box.innerHTML='';if(note)note.textContent='';if(CLOSED.includes(dateEl.value)){if(note)note.textContent=t.closed;chosen='';return}const need=plan().h,busy=TAKEN.filter(x=>x.date===dateEl.value);if(note&&busy.length)note.textContent=t.busy+' '+busy.map(b=>hm(b.start)+'-'+hm(b.start+b.hours)).join(', ');for(var h=10;h<=19;h++){[0,30].forEach(function(min){if(h===19&&min===30)return;const time=pad(h)+':'+(min?'30':'00'),s=h+min/60,btn=document.createElement('button');btn.type='button';btn.textContent=time;btn.disabled=s+need>21||past(s)||busy.some(function(x){return s<x.start+x.hours&&s+need>x.start});btn.className=chosen===time?'on':'';btn.onclick=function(){chosen=time;draw()};box.appendChild(btn)})}}
