@@ -72,7 +72,7 @@ img.out{width:100%;border-radius:16px;margin-top:12px}
     <a id="down" class="dl" style="display:none;margin-top:8px">ดาวน์โหลดรูป</a>
   </div>
 </div>
-<script src="staff.js?v=1"></script>
+<script src="staff.js?v=2"></script>
 <script>
 const API='https://script.google.com/macros/s/AKfycbyOM3MfkwLwBf0RkPlAoKzfa_1EbX2yjPyVP54G-YNUspcjVT9zm82VegNvMyvvbXt5/exec';
 const MONTHS=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
@@ -270,6 +270,7 @@ async function loadBooking(){
   msg.textContent='กำลังโหลด...';
   try{
     const j=await staffGet(API,{action:'getBooking',id});
+    if(j&&j.error==='staff_locked'){ msg.textContent=staffLockedMsg; return; }
     if(j&&j.error==='staff_key'){ msg.textContent='ต้องใส่รหัสพนักงานที่ถูกต้องก่อน'; return; }
     if(!j||!j.ok||!j.booking){ msg.textContent='ไม่พบรหัสจอง '+id; return; }
     const b=j.booking;
