@@ -83,6 +83,7 @@ const SVCS=[['bath','อาบน้ำอย่างเดียว'],['shave'
 const ADDON_META=[
   {key:'coat',label:'ทรีตเมนต์บำรุงเส้นขน',price:50,kind:'bool'},
   {key:'ear',label:'ล้างหูด้วยน้ำยาทำความสะอาดหู',price:50,kind:'bool'},
+  {key:'pluck',label:'ถอนขนหู (หมา)',price:50,kind:'bool',dogOnly:true},
   {key:'mala',label:'อาบแชมพูยา Malaseb',kind:'choice',spot:50,full:100},
   {key:'deg',label:'ขจัดคราบมันสะสมบนเส้นขน',kind:'choice',spot:100,full:500,catOnly:true},
   {key:'nail',label:'ตะไบเก็บขอบเล็บ',price:50,kind:'bool'}
@@ -105,6 +106,7 @@ function addonHtml(type,pre){
   pre=pre||{};
   return '<div class="addon-box" data-addons><strong>บริการเสริม (ติ๊กตามที่ได้ทำจริง)</strong><p class="hint">ราคาตามรายการจอง · ไม่รวมในมัดจำ</p>'+ADDON_META.map(a=>{
     if(a.catOnly&&type!=='แมว')return '';
+    if(a.dogOnly&&type!=='สุนัข')return '';
     if(a.kind==='bool'){
       const on=!!pre[a.key];
       return '<label class="check"><input type="checkbox" data-addon="'+a.key+'" '+(on?'checked':'')+'> <span><b>'+a.label+'</b> +฿'+a.price+'</span></label>';
@@ -139,7 +141,7 @@ function petCard(i,seed){
 }
 
 function readAddons(card){
-  const out={coat:false,ear:false,mala:'',deg:'',nail:false};
+  const out={coat:false,ear:false,pluck:false,mala:'',deg:'',nail:false};
   card.querySelectorAll('[data-addon]').forEach(el=>{
     const k=el.dataset.addon;
     if(el.type==='checkbox') out[k]=el.checked;
@@ -147,12 +149,13 @@ function readAddons(card){
   });
   const type=val(card,'type');
   if(type!=='แมว') out.deg='';
+  if(type!=='สุนัข') out.pluck=false;
   return out;
 }
 
 function addonPrice(a,type){
   let s=0;
-  if(a.coat)s+=50; if(a.ear)s+=50; if(a.nail)s+=50;
+  if(a.coat)s+=50; if(a.ear)s+=50; if(type==='สุนัข'&&a.pluck)s+=50; if(a.nail)s+=50;
   if(a.mala==='spot')s+=50; else if(a.mala==='full')s+=100;
   if(type==='แมว'){ if(a.deg==='spot')s+=100; else if(a.deg==='full')s+=500; }
   return s;
@@ -162,6 +165,7 @@ function addonLabel(a,type){
   const parts=[];
   if(a.coat)parts.push('ทรีตเมนต์บำรุงเส้นขน');
   if(a.ear)parts.push('ล้างหู');
+  if(type==='สุนัข'&&a.pluck)parts.push('ถอนขนหู');
   if(a.mala==='spot')parts.push('Malaseb 1 จุด');
   if(a.mala==='full')parts.push('Malaseb ทั้งตัว');
   if(type==='แมว'&&a.deg==='spot')parts.push('ขจัดคราบมัน 1 จุด');
@@ -254,7 +258,7 @@ function mapBookingPet(p, bookingDeposit, idx, count){
   const svcMap={bath:'bath',cut:'cut',clip:'shave',scissor:'groom',addon:'addon'};
   const svc=svcMap[p.svc||p.service]||'bath';
   const dep=count===1?Number(bookingDeposit||0):(idx===0?Number(bookingDeposit||0):0);
-  const addons=Object.assign({coat:false,ear:false,mala:'',deg:'',nail:false}, p.addons||{});
+  const addons=Object.assign({coat:false,ear:false,pluck:false,mala:'',deg:'',nail:false}, p.addons||{});
   return {name:p.name||'', type, coat:type==='แมว'?'double':'short', weight:'', service:svc, deposit:dep, price:0, note:'', addons};
 }
 
