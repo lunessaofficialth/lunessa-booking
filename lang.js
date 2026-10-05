@@ -9,3 +9,8 @@ I.zh.ad={coat:'毛发护理',coatEn:'Coat Conditioning Treatment',coatD:'让毛�
 I.th.myPets='น้องของคุณ';I.th.myPetsHint='แตะชื่อน้องเพื่อเลือก ไม่ต้องกรอกใหม่';I.th.welcome='ยินดีต้อนรับกลับค่ะ คุณ';I.th.max2='จองได้ครั้งละไม่เกิน 2 ตัว';
 I.en.myPets='Your pets';I.en.myPetsHint='Tap a name to add them. No retyping needed.';I.en.welcome='Welcome back, ';I.en.max2='Up to 2 pets per booking.';
 I.zh.myPets='你的毛孩子';I.zh.myPetsHint='点名字即可选择，无需重新填写。';I.zh.welcome='欢迎回来，';I.zh.max2='每次最多预约 2 只。';
+I.th.free='ฟรี';I.th.reqLabel='อยากให้เสริมอะไรเพิ่มเติมไหมคะ (ไม่บังคับ)';I.th.reqPh='เช่น เช็ดคราบน้ำตา, ทำโบว์';I.th.reqShort='คำขอเพิ่มเติม';I.th.addSum='รวมบริการเสริม';I.th.addPay='ชำระที่ร้าน ไม่รวมในมัดจำ';
+I.en.free='Free';I.en.reqLabel='Anything else you would like us to add? (optional)';I.en.reqPh='e.g. tear stain cleaning, a bow';I.en.reqShort='Extra request';I.en.addSum='Add-ons total';I.en.addPay='paid at the shop, not part of the deposit';
+I.zh.free='免费';I.zh.reqLabel='还想加点什么吗？（选填）';I.zh.reqPh='例如：清理泪痕、戴蝴蝶结';I.zh.reqShort='额外需求';I.zh.addSum='附加服务合计';I.zh.addPay='到店支付，不含在订金内';
+Object.assign(I.en.ad,{gland:'Anal gland expression',glandEn:'Anal Gland Expression',glandD:'Gently empties the glands beside the bottom to reduce odour and scooting.',sani:'Sanitary trim',saniEn:'Sanitary Trim',saniD:'A short, neat trim around the bottom to keep it clean.',teeth:'Tooth brushing',teethEn:'Tooth Brushing',teethD:'Brushing with a pet toothbrush and toothpaste to help reduce plaque and bad breath.'});
+Object.assign(I.zh.ad,{gland:'挤肛门腺',glandEn:'Anal Gland Expression',glandD:'帮助排出肛门两侧腺体的积液，减少异味和蹭屁股。',sani:'屁屁周围剃毛',saniEn:'Sanitary Trim',saniD:'把屁屁周围的毛剃短剃整齐，更干净卫生。',teeth:'刷牙',teethEn:'Tooth Brushing',teethD:'用宠物牙刷和牙膏刷牙，帮助减少牙垢和口臭。'});

@@ -60,6 +60,7 @@ img.out{width:100%;border-radius:16px;margin-top:12px}
   <div class="card" id="totals">
     <div class="tot"><span>ค่าบริการหลัก</span><b id="sumBase">฿0</b></div>
     <div class="tot"><span>บริการเสริม</span><b id="sumAdd">฿0</b></div>
+    <div class="tot"><span>รายการเพิ่มเติม</span><b id="sumExtra">฿0</b></div>
     <div class="tot"><span>รวม</span><b id="sumTotal">฿0</b></div>
     <div class="tot"><span>มัดจำ</span><b id="sumDep">฿0</b></div>
     <div class="tot"><span>ยอดชำระเพิ่ม</span><span class="due" id="sumDue">฿0</span></div>
@@ -87,8 +88,12 @@ const ADDON_META=[
   {key:'pluck',label:'ถอนขนหู (หมา)',price:50,kind:'bool',dogOnly:true},
   {key:'mala',label:'อาบแชมพูยา Malaseb',kind:'choice',spot:50,full:100},
   {key:'deg',label:'ขจัดคราบมันสะสมบนเส้นขน',kind:'choice',spot:100,full:500,catOnly:true},
-  {key:'nail',label:'ตะไบเก็บขอบเล็บ',price:50,kind:'bool'}
+  {key:'nail',label:'ตะไบเก็บขอบเล็บ',price:50,kind:'bool'},
+  {key:'gland',label:'บีบต่อมเหม็น',price:30,kind:'bool'},
+  {key:'sani',label:'ไถขนก้น',price:0,kind:'bool'},
+  {key:'teeth',label:'แปรงฟัน',price:50,kind:'bool'}
 ];
+function escH(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 let n=1;
 let VISIT_ID='V-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();
 let SAVING=false;
@@ -110,7 +115,7 @@ function addonHtml(type,pre){
     if(a.dogOnly&&type!=='สุนัข')return '';
     if(a.kind==='bool'){
       const on=!!pre[a.key];
-      return '<label class="check"><input type="checkbox" data-addon="'+a.key+'" '+(on?'checked':'')+'> <span><b>'+a.label+'</b> +฿'+a.price+'</span></label>';
+      return '<label class="check"><input type="checkbox" data-addon="'+a.key+'" '+(on?'checked':'')+'> <span><b>'+a.label+'</b> '+(a.price?'+฿'+a.price:'ฟรี')+'</span></label>';
     }
     const cur=pre[a.key]||'';
     return '<div style="margin:8px 0 4px"><b>'+a.label+'</b></div>'+
@@ -137,12 +142,15 @@ function petCard(i,seed){
     '<div class="row"><div><label>ค่าบริการหลัก</label><input data-f="price" inputmode="numeric" value="'+(seed.price!=null?seed.price:0)+'"></div>'+
     '<div><label>มัดจำที่รับไว้</label><input data-f="deposit" inputmode="numeric" value="'+(seed.deposit!=null?seed.deposit:0)+'"></div></div>'+
     addonHtml(type,addons).replace(/name="ad-([^-]+)-X"/g,'name="ad-$1-'+i+'"')+
+    (seed.req?'<div class="addon-box" data-req="'+escH(seed.req)+'"><strong>คำขอจากลูกค้า</strong>'+escH(seed.req)+'</div>':'')+
+    '<div class="row"><div><label>รายการเพิ่มเติม (พิมพ์เอง)</label><input data-f="xlabel" placeholder="เช่น ตัดแต่งขนหน้า" value="'+escH(seed.xlabel||'')+'"></div>'+
+    '<div><label>ราคา (บาท)</label><input data-f="xprice" inputmode="numeric" placeholder="0" value="'+escH(seed.xprice||'')+'"></div></div>'+
     '<label>โน้ต ไม่กรอกจะไม่ขึ้นใบเสร็จ</label><textarea data-f="note">'+(seed.note||'')+'</textarea>'+
   '</div>';
 }
 
 function readAddons(card){
-  const out={coat:false,ear:false,pluck:false,mala:'',deg:'',nail:false};
+  const out={coat:false,ear:false,pluck:false,mala:'',deg:'',nail:false,gland:false,sani:false,teeth:false};
   card.querySelectorAll('[data-addon]').forEach(el=>{
     const k=el.dataset.addon;
     if(el.type==='checkbox') out[k]=el.checked;
@@ -159,6 +167,7 @@ function addonPrice(a,type){
   if(a.coat)s+=50; if(a.ear)s+=50; if(type==='สุนัข'&&a.pluck)s+=50; if(a.nail)s+=50;
   if(a.mala==='spot')s+=50; else if(a.mala==='full')s+=100;
   if(type==='แมว'){ if(a.deg==='spot')s+=100; else if(a.deg==='full')s+=500; }
+  if(a.gland)s+=30; if(a.teeth)s+=50; // sani (ไถขนก้น) is free
   return s;
 }
 
@@ -172,6 +181,9 @@ function addonLabel(a,type){
   if(type==='แมว'&&a.deg==='spot')parts.push('ขจัดคราบมัน 1 จุด');
   if(type==='แมว'&&a.deg==='full')parts.push('ขจัดคราบมัน ทั้งตัว');
   if(a.nail)parts.push('ตะไบเก็บขอบเล็บ');
+  if(a.gland)parts.push('บีบต่อมเหม็น');
+  if(a.sani)parts.push('ไถขนก้น (ฟรี)');
+  if(a.teeth)parts.push('แปรงฟัน');
   return parts.join(', ');
 }
 
@@ -207,11 +219,15 @@ function collectPets(){
     const service_price=Number(val(c,'price')||0);
     const addons_price=addonPrice(addons,type);
     const deposit=Number(val(c,'deposit')||0);
-    const price=service_price+addons_price;
+    const extra_label=val(c,'xlabel');
+    const extra_price=extra_label?Math.max(0,Number(val(c,'xprice')||0)||0):0;
+    const reqEl=c.querySelector('[data-req]');
+    const price=service_price+addons_price+extra_price;
     return {
       name:val(c,'name'), type, coat:labelOf(COATS[type]||[],val(c,'coat')), weight:val(c,'weight'),
       service:labelOf(SVCS,val(c,'service')), service_code:val(c,'service'),
       service_price, addons, addons_price, addons_label:addonLabel(addons,type),
+      extra_label, extra_price, customer_req:reqEl?reqEl.getAttribute('data-req'):'',
       price, deposit, due:price-deposit, note:val(c,'note')
     };
   }).filter(p=>p.name);
@@ -221,10 +237,12 @@ function updateTotals(){
   const pets=collectPets();
   const base=pets.reduce((s,p)=>s+p.service_price,0);
   const add=pets.reduce((s,p)=>s+p.addons_price,0);
+  const extra=pets.reduce((s,p)=>s+p.extra_price,0);
   const dep=pets.reduce((s,p)=>s+p.deposit,0);
-  const total=base+add;
+  const total=base+add+extra;
   document.getElementById('sumBase').textContent=baht(base);
   document.getElementById('sumAdd').textContent=baht(add);
+  document.getElementById('sumExtra').textContent=baht(extra);
   document.getElementById('sumTotal').textContent=baht(total);
   document.getElementById('sumDep').textContent=baht(dep);
   document.getElementById('sumDue').textContent=baht(total-dep);
@@ -247,7 +265,7 @@ document.getElementById('pets').addEventListener('change',e=>{
   else updateTotals();
 });
 document.getElementById('pets').addEventListener('input',e=>{
-  if(e.target.dataset.f==='weight'||e.target.dataset.f==='price'||e.target.dataset.f==='deposit'){
+  if(e.target.dataset.f==='weight'||e.target.dataset.f==='price'||e.target.dataset.f==='deposit'||e.target.dataset.f==='xprice'||e.target.dataset.f==='xlabel'){
     const c=e.target.closest('[data-pet]');
     if(e.target.dataset.f==='weight'&&c) refresh(c); else updateTotals();
   }
@@ -259,8 +277,8 @@ function mapBookingPet(p, bookingDeposit, idx, count){
   const svcMap={bath:'bath',cut:'cut',clip:'shave',scissor:'groom',addon:'addon'};
   const svc=svcMap[p.svc||p.service]||'bath';
   const dep=count===1?Number(bookingDeposit||0):(idx===0?Number(bookingDeposit||0):0);
-  const addons=Object.assign({coat:false,ear:false,pluck:false,mala:'',deg:'',nail:false}, p.addons||{});
-  return {name:p.name||'', type, coat:type==='แมว'?'double':'short', weight:'', service:svc, deposit:dep, price:0, note:'', addons};
+  const addons=Object.assign({coat:false,ear:false,pluck:false,mala:'',deg:'',nail:false,gland:false,sani:false,teeth:false}, p.addons||{});
+  return {name:p.name||'', type, coat:type==='แมว'?'double':'short', weight:'', service:svc, deposit:dep, price:0, note:'', addons, req:String(p.req||'').slice(0,300)};
 }
 
 async function loadBooking(){
@@ -312,7 +330,7 @@ async function make(){
     const qrBox=qr?fit(qr,280):{w:0,h:0};
     const slipBox=slip?fit(slip,280):{w:0,h:0};
     const W=900,side=64;
-    const petH=pets.reduce((s,p)=>s+(p.note?252:212)+(p.addons_price?36:0),0);
+    const petH=pets.reduce((s,p)=>s+(p.note?252:212)+(p.addons_price?36:0)+(p.extra_label?36:0),0);
     const H=560+petH+220+qrBox.h+80+slipBox.h+(slip?40:0)+160;
     const canvas=document.createElement('canvas'); canvas.width=W; canvas.height=H;
     const ctx=canvas.getContext('2d');
@@ -330,7 +348,7 @@ async function make(){
     row(ctx,'ชื่อลูกค้า',owner,side,y,W-side); y+=26;
     ctx.strokeStyle='#E6DED4'; ctx.beginPath(); ctx.moveTo(side,y); ctx.lineTo(W-side,y); ctx.stroke(); y+=22;
     pets.forEach(p=>{
-      const ad=p.addons_price?36:0; const h=(p.note?236:196)+ad;
+      const ad=p.addons_price?36:0; const ex=p.extra_label?36:0; const h=(p.note?236:196)+ad+ex;
       ctx.fillStyle='#FFFCF8'; round(ctx,side,y,W-side*2,h,18); ctx.fill(); ctx.strokeStyle='#E6DED4'; ctx.stroke();
       ctx.fillStyle='#3E4F44'; ctx.font='700 30px Sarabun,sans-serif'; ctx.textAlign='left'; ctx.fillText(p.name,side+22,y+42);
       ctx.fillStyle='#8a8178'; ctx.font='400 20px Sarabun,sans-serif'; ctx.textAlign='right'; ctx.fillText(p.type,W-side-22,y+40); ctx.textAlign='left';
@@ -339,8 +357,9 @@ async function make(){
       ctx.strokeStyle='#E6DED4'; ctx.beginPath(); ctx.moveTo(side+22,y+128); ctx.lineTo(W-side-22,y+128); ctx.stroke();
       row(ctx,'ค่าบริการ',baht(p.service_price),side+22,y+160,W-side-22);
       if(ad) row(ctx,'บริการเสริม'+(p.addons_label?' ('+p.addons_label+')':''),baht(p.addons_price),side+22,y+192,W-side-22);
-      row(ctx,'มัดจำที่รับไว้',baht(p.deposit),side+22,y+192+ad,W-side-22);
-      if(p.note){ ctx.fillStyle='#6d655e'; ctx.font='400 20px Sarabun,sans-serif'; ctx.textAlign='left'; ctx.fillText(p.note,side+22,y+222+ad); }
+      if(ex) row(ctx,p.extra_label,baht(p.extra_price),side+22,y+192+ad,W-side-22);
+      row(ctx,'มัดจำที่รับไว้',baht(p.deposit),side+22,y+192+ad+ex,W-side-22);
+      if(p.note){ ctx.fillStyle='#6d655e'; ctx.font='400 20px Sarabun,sans-serif'; ctx.textAlign='left'; ctx.fillText(p.note,side+22,y+222+ad+ex); }
       y+=h+16;
     });
     const boxH=168;
@@ -363,7 +382,8 @@ async function make(){
       pets:pets.map(p=>({
         name:p.name, type:p.type, coat:p.coat, weight:p.weight, service:p.service,
         service_price:p.service_price, addons:p.addons, addons_price:p.addons_price,
-        addons_label:p.addons_label, price:p.price, deposit:p.deposit, note:p.note
+        addons_label:p.addons_label, extra_label:p.extra_label, extra_price:p.extra_price,
+        customer_req:p.customer_req, price:p.price, deposit:p.deposit, note:p.note
       })),
       total:pets.reduce((s,p)=>s+p.price,0), extra:due
     };
