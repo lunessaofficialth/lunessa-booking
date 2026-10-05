@@ -72,6 +72,7 @@ img.out{width:100%;border-radius:16px;margin-top:12px}
     <a id="down" class="dl" style="display:none;margin-top:8px">ดาวน์โหลดรูป</a>
   </div>
 </div>
+<script src="staff.js?v=1"></script>
 <script>
 const API='https://script.google.com/macros/s/AKfycbyOM3MfkwLwBf0RkPlAoKzfa_1EbX2yjPyVP54G-YNUspcjVT9zm82VegNvMyvvbXt5/exec';
 const MONTHS=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
@@ -268,7 +269,8 @@ async function loadBooking(){
   if(!id){ msg.textContent='ใส่รหัสจองก่อน'; return; }
   msg.textContent='กำลังโหลด...';
   try{
-    const j=await fetch(API+'?action=getBooking&id='+encodeURIComponent(id)+'&t='+Date.now()).then(r=>r.json());
+    const j=await staffGet(API,{action:'getBooking',id});
+    if(j&&j.error==='staff_key'){ msg.textContent='ต้องใส่รหัสพนักงานที่ถูกต้องก่อน'; return; }
     if(!j||!j.ok||!j.booking){ msg.textContent='ไม่พบรหัสจอง '+id; return; }
     const b=j.booking;
     document.getElementById('owner').value=b.owner||'';
@@ -355,7 +357,7 @@ async function make(){
     const a=document.getElementById('down'); a.href=url; a.download='lunessa-receipt.png'; a.style.display='inline-flex';
 
     const payload={
-      action:'saveVisit', visit_id:VISIT_ID, iso_date:isoDate, date:isoDate,
+      action:'saveVisit', key:staffKey(), visit_id:VISIT_ID, iso_date:isoDate, date:isoDate,
       owner, phone:String(phone).replace(/\D/g,''),
       pets:pets.map(p=>({
         name:p.name, type:p.type, coat:p.coat, weight:p.weight, service:p.service,
@@ -368,6 +370,7 @@ async function make(){
     try{
       const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
       const j=await r.json();
+      if(j&&j.error==='staff_key') staffKeyBad();
       saved=!!(j&&j.ok);
     }catch(e){
       fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)}).catch(()=>{});
