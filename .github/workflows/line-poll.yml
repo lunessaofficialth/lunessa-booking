@@ -1,0 +1,47 @@
+# Poll Lunessa Apps Script LINE notify every ~10 min (no Apps Script time trigger).
+# Sending stays gated by Script Property LINE_NOTIFY_ENABLED (must stay false until Palm enables).
+# Does not touch GitHub Pages (legacy Pages from main /).
+name: LINE notify poll
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: cronPoll web app
+        env:
+          CRON_KEY: ${{ secrets.LUNESSA_CRON_KEY }}
+          WEBAPP_URL: https://script.google.com/macros/s/AKfycbyOM3MfkwLwBf0RkPlAoKzfa_1EbX2yjPyVP54G-YNUspcjVT9zm82VegNvMyvvbXt5/exec
+        run: |
+          set -euo pipefail
+          if [ -z "${CRON_KEY:-}" ]; then
+            echo "LUNESSA_CRON_KEY secret missing"
+            exit 1
+          fi
+          # Apps Script returns 302; capture Location and GET it (do not re-POST).
+          headers=$(mktemp)
+          curl -sS -D "$headers" -o /dev/null -X POST \
+            -H 'Content-Type: application/json' \
+            --data "{\"action\":\"cronPoll\",\"key\":\"${CRON_KEY}\"}" \
+            "$WEBAPP_URL"
+          loc=$(awk 'BEGIN{IGNORECASE=1} /^location:/ {print $2}' "$headers" | tr -d '\r' | tail -n1)
+          rm -f "$headers"
+          if [ -z "$loc" ]; then
+            echo "No Location redirect from web app"
+            exit 1
+          fi
+          body=$(curl -sS "$loc")
+          echo "$body"
+          echo "$body" | python3 -c '
+          import sys, json
+          d = json.load(sys.stdin)
+          if d.get("ok") is not True:
+              raise SystemExit("ok!=true: " + json.dumps(d))
+          print("status ok enabled=%s ran=%s actionsCount=%s" % (
+              d.get("enabled"), d.get("ran"), d.get("actionsCount")))
+          '
