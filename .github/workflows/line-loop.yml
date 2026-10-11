@@ -1,0 +1,58 @@
+# Reliable ~10-min LINE poll: one long-running job polls cronPoll every 10 min for ~5h20m,
+# then re-dispatches itself (GITHUB_TOKEN workflow_dispatch does start new runs).
+# Concurrency group keeps at most one loop running (+1 queued). line-poll.yml stays as backup;
+# overlapping polls are safe (Apps Script script lock + idempotent sent_at columns).
+name: LINE notify loop
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '7 */2 * * *'   # kicker: restarts the loop if the chain ever breaks
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: line-notify-loop
+  cancel-in-progress: false
+
+jobs:
+  loop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Poll every 10 min
+        env:
+          CRON_KEY: ${{ secrets.LUNESSA_CRON_KEY }}
+          WEBAPP_URL: https://script.google.com/macros/s/AKfycbyOM3MfkwLwBf0RkPlAoKzfa_1EbX2yjPyVP54G-YNUspcjVT9zm82VegNvMyvvbXt5/exec
+          LOOP_SECONDS: '19200'   # 5h20m
+          INTERVAL: '600'
+        run: |
+          set -uo pipefail
+          [ -n "${CRON_KEY:-}" ] || { echo "LUNESSA_CRON_KEY secret missing"; exit 1; }
+          poll() {
+            local h loc body
+            h=$(mktemp)
+            curl -sS -m 120 -D "$h" -o /dev/null -X POST -H 'Content-Type: application/json' \
+              --data "{\"action\":\"cronPoll\",\"key\":\"${CRON_KEY}\"}" "$WEBAPP_URL" || true
+            loc=$(awk 'BEGIN{IGNORECASE=1} /^location:/ {print $2}' "$h" | tr -d '\r' | tail -n1)
+            rm -f "$h"
+            if [ -z "$loc" ]; then echo "$(date -u +%FT%TZ) no redirect"; return 1; fi
+            body=$(curl -sS -m 120 "$loc" || true)
+            echo "$(date -u +%FT%TZ) $body"
+            echo "$body" | grep -q '"ok":true'
+          }
+          start=$(date +%s); fails=0
+          while :; do
+            poll || fails=$((fails+1))
+            now=$(date +%s)
+            [ $((now - start + INTERVAL)) -lt "$LOOP_SECONDS" ] || break
+            sleep "$INTERVAL"
+          done
+          echo "loop done, failed polls: $fails"
+      - name: Re-dispatch next loop
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run line-loop.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME"
