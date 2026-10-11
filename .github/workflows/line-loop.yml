@@ -6,6 +6,11 @@ name: LINE notify loop
 
 on:
   workflow_dispatch:
+    inputs:
+      loop_seconds:
+        description: 'Loop length in seconds (test only; chain uses default)'
+        required: false
+        default: '19200'
   schedule:
     - cron: '7 */2 * * *'   # kicker: restarts the loop if the chain ever breaks
 
@@ -26,7 +31,7 @@ jobs:
         env:
           CRON_KEY: ${{ secrets.LUNESSA_CRON_KEY }}
           WEBAPP_URL: https://script.google.com/macros/s/AKfycbyOM3MfkwLwBf0RkPlAoKzfa_1EbX2yjPyVP54G-YNUspcjVT9zm82VegNvMyvvbXt5/exec
-          LOOP_SECONDS: '19200'   # 5h20m
+          LOOP_SECONDS: ${{ inputs.loop_seconds || '19200' }}   # 5h20m default
           INTERVAL: '600'
         run: |
           set -uo pipefail
